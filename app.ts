@@ -4,8 +4,9 @@ import express, { Express, NextFunction, Request, Response } from "express";
 import helmet from "helmet";
 import mongoose from "mongoose";
 import logger from "morgan";
-import usersRouter from './src/routers/usersRouter';
-import { ErrorResponse } from "./types";
+import { sendResponseError } from "./src/helpers/commonFuncs";
+import usersRouter from "./src/routers/usersRouter";
+import { ResponseError } from "./src/types/common";
 
 dotenv.config();
 
@@ -50,15 +51,17 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use((req: Request, res: Response, next) => {
   const status = 404;
-  const error = new Error("Not Found");
-  next({ status, error });
+  const errors = new Error("Not Found");
+  next({ status, errors });
 });
 
 app.use(
-  (err: ErrorResponse, req: Request, res: Response, next: NextFunction) => {
-    const status = err.status || 500;
-    const message = err.error.message || "Internal Server Error";
-    return res.status(status).json({ status, message });
+  (err: ResponseError, req: Request, res: Response, next: NextFunction) => {
+    const { status = 500, errors = err } = err;
+    const message = errors?.message || "Internal Server Error";
+    return res
+      .status(status)
+      .json(sendResponseError({ status, message, errors }));
   }
 );
 

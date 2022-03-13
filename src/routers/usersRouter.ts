@@ -5,4 +5,6 @@ const router = PromiseRouter();
 
 router.route("/").get(usersController.index);
 
+router.route("/").post(usersController.create);
+
 export default router;
