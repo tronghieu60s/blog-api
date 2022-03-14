@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import {
-  sendResponseResult,
+  initResponseResult,
   sendResponseSuccess,
 } from "../helpers/commonFuncs";
 import * as UsersModal from "../models/usersModel";
@@ -14,7 +14,7 @@ export const getUsers = async (req: Request, res: Response) => {
   const page = Number(req.query?.page || 1);
   const pageSize = Number(req.query?.pageSize || APP_PAGINATION_LIMIT_DEFAULT);
   const order = String(req.query?.order || "desc");
-  const orderby = String(req.query?.orderby || "user_registered");
+  const orderby = String(req.query?.orderby || "updated_at");
 
   const { items, count } = await UsersModal.getUsers({
     q,
@@ -37,49 +37,68 @@ export const getUsers = async (req: Request, res: Response) => {
     previousPage,
   };
 
-  const results: ResponseResult = sendResponseResult({
+  const results: ResponseResult = initResponseResult({
     data,
   });
-  return res.status(200).json(sendResponseSuccess({ results }));
+  return sendResponseSuccess(res, { results });
 };
 
 export const getUser = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
   const item = await UsersModal.getUser(id);
   const data = item ? { items: [item] } : {};
-  const results: ResponseResult = sendResponseResult({
+  const results: ResponseResult = initResponseResult({
     data,
   });
-  return res.status(200).json(sendResponseSuccess({ results }));
+  return sendResponseSuccess(res, { results });
 };
 
 export const createUser = async (req: Request, res: Response) => {
   const item = await UsersModal.createUser(req.body);
   const data = item ? { items: [item] } : {};
-  const results: ResponseResult = sendResponseResult({
+  const results: ResponseResult = initResponseResult({
     data,
     insertId: item._id,
     rowsAffected: item ? 1 : 0,
   });
-  return res.status(200).json(sendResponseSuccess({ results }));
+  return sendResponseSuccess(res, { results });
 };
 
 export const updateUser = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
   const item = await UsersModal.updateUser(id, req.body);
   const data = item ? { items: [item] } : {};
-  const results: ResponseResult = sendResponseResult({
+  const results: ResponseResult = initResponseResult({
     data,
     rowsAffected: item ? 1 : 0,
   });
-  return res.status(200).json(sendResponseSuccess({ results }));
+  return sendResponseSuccess(res, { results });
 };
 
 export const deleteUser = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
   const item = await UsersModal.deleteUser(id);
-  const results: ResponseResult = sendResponseResult({
+  const results: ResponseResult = initResponseResult({
     rowsAffected: item ? 1 : 0,
   });
-  return res.status(200).json(sendResponseSuccess({ results }));
+  return sendResponseSuccess(res, { results });
+};
+
+export const authUser = async (req: Request, res: Response) => {
+  const { login, password } = req.body;
+  const item = await UsersModal.authUser(login, password);
+  const data = item ? { items: [item] } : {};
+  const results: ResponseResult = initResponseResult({
+    data,
+  });
+  return sendResponseSuccess(res, { results });
+};
+
+export const registerUser = async (req: Request, res: Response) => {
+  const item = await UsersModal.registerUser(req.body);
+  const data = item ? { items: [item] } : {};
+  const results: ResponseResult = initResponseResult({
+    data,
+  });
+  return sendResponseSuccess(res, { results });
 };

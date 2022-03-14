@@ -1,11 +1,11 @@
 import bcrypt from "bcrypt";
-import Joi from "joi";
 import mongoose from "mongoose";
+import { randomIntByLength } from "../helpers/commonFuncs";
 import {
-  checkErrorJoiValidate,
-  randomIntByLength,
-} from "../helpers/commonFuncs";
-import { CreateUserParams, GetUsersParams } from "../types/usersTypes";
+  CreateUserParams,
+  GetUsersParams,
+  RegisterUserParams,
+} from "../types/usersTypes";
 
 const Schema = mongoose.Schema;
 
@@ -46,25 +46,6 @@ const UsersSchema = new Schema(
   }
 );
 
-export const joiCreateSchema = Joi.object({
-  user_login: Joi.string().required(),
-  user_pass: Joi.string().required(),
-  user_nicename: Joi.string(),
-  user_email: Joi.string().required(),
-  user_url: Joi.string(),
-  user_status: Joi.number(),
-  display_name: Joi.string(),
-});
-
-export const joiUpdateSchema = Joi.object({
-  user_pass: Joi.string(),
-  user_nicename: Joi.string(),
-  user_email: Joi.string(),
-  user_url: Joi.string(),
-  user_status: Joi.number(),
-  display_name: Joi.string(),
-});
-
 UsersSchema.pre("save", async function () {
   // Encode password
   this.user_pass = await bcrypt.hash(this.user_pass, 10);
@@ -102,19 +83,33 @@ export const getUsers = async (args: GetUsersParams) => {
 };
 
 export const createUser = async (args: CreateUserParams) => {
-  return new UsersModel(
-    checkErrorJoiValidate(joiCreateSchema.validate(args))
-  ).save();
+  return new UsersModel(args).save();
 };
 
 export const updateUser = async (id: string, args: CreateUserParams) => {
-  return await UsersModel.findOneAndUpdate(
-    { _id: id },
-    checkErrorJoiValidate(joiUpdateSchema.validate(args)),
-    { new: true }
-  );
+  return await UsersModel.findOneAndUpdate({ _id: id }, args, { new: true });
 };
 
 export const deleteUser = async (id: string) => {
   return await UsersModel.findOneAndDelete({ _id: id }).exec();
+};
+
+export const authUser = async (login: string, password: string) => {
+  const user = await UsersModel.findOne({
+    $or: [{ user_login: login }, { user_email: login }],
+  }).exec();
+  if (user) {
+    const isValid = await bcrypt.compare(password, user.user_pass);
+    if (isValid) {
+      const token = await bcrypt.hash(user.user_login, 10);
+      return { user, token };
+    }
+  }
+  return null;
+};
+
+export const registerUser = async (args: RegisterUserParams) => {
+  const user = await new UsersModel(args).save();
+  const token = await bcrypt.hash(user.user_login, 10);
+  return { user, token };
 };

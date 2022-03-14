@@ -1,41 +1,35 @@
-import Joi from "joi";
+import { Response } from "express";
 import { ResponseCommon, ResponseError, ResponseResult } from "../types/common";
-
-/* Validate Functions */
-
-export const checkErrorJoiValidate = ({
-  error,
-  value,
-}: Joi.ValidationResult<any>) => {
-  if (error) {
-    throw error.details[0];
-  }
-  return value;
-};
 
 /* Response Functions */
 
-export const sendResponseResult = (args?: ResponseResult): ResponseResult => ({
+export const initResponseResult = (args?: ResponseResult): ResponseResult => ({
   data: {},
   insertId: null,
   rowsAffected: 0,
   ...(args as {}),
 });
 
-export const sendResponseSuccess = (args?: ResponseCommon): ResponseCommon => ({
-  status: 200,
-  success: true,
-  results: sendResponseResult(),
-  ...(args as {}),
-});
+export const sendResponseSuccess = (res: Response, args?: ResponseCommon) => {
+  const response = {
+    status: 200,
+    success: true,
+    results: initResponseResult(),
+    ...(args as {}),
+  };
+  return res.status(response.status).json(response);
+};
 
-export const sendResponseError = (args?: ResponseError): ResponseError => ({
-  status: 500,
-  success: false,
-  message: "Internal Server Error",
-  errors: new Error(""),
-  ...(args as {}),
-});
+export const sendResponseError = (res: Response, args?: ResponseError) => {
+  const response = {
+    status: 500,
+    success: false,
+    message: "Internal Server Error",
+    errors: new Error(""),
+    ...(args as {}),
+  };
+  return res.status(response.status).json(response);
+};
 
 /* Common Functions */
 

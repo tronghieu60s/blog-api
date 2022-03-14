@@ -16,3 +16,9 @@ export type CreateUserParams = {
   user_status?: number;
   display_name?: string;
 };
+
+export type RegisterUserParams = {
+  user_login: string;
+  user_pass: string;
+  user_email: string;
+};
