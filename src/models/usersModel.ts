@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { randomIntByLength } from "../helpers/commonFuncs";
 import {
@@ -6,6 +7,8 @@ import {
   GetUsersParams,
   RegisterUserParams,
 } from "../types/usersTypes";
+
+const { APP_TOKEN_JWT_KEY = "" } = process.env;
 
 const Schema = mongoose.Schema;
 
@@ -94,14 +97,21 @@ export const deleteUser = async (id: string) => {
   return await UsersModel.findOneAndDelete({ _id: id }).exec();
 };
 
-export const authUser = async (login: string, password: string) => {
+export const authUser = async (
+  login: string,
+  password: string,
+  outdated: number
+) => {
   const user = await UsersModel.findOne({
     $or: [{ user_login: login }, { user_email: login }],
   }).exec();
   if (user) {
     const isValid = await bcrypt.compare(password, user.user_pass);
     if (isValid) {
-      const token = await bcrypt.hash(user.user_login, 10);
+      const token = jwt.sign(
+        { login: user.user_login, outdated: Date.now() + outdated },
+        APP_TOKEN_JWT_KEY
+      );
       return { user, token };
     }
   }
@@ -109,7 +119,5 @@ export const authUser = async (login: string, password: string) => {
 };
 
 export const registerUser = async (args: RegisterUserParams) => {
-  const user = await new UsersModel(args).save();
-  const token = await bcrypt.hash(user.user_login, 10);
-  return { user, token };
+  return await new UsersModel(args).save();;
 };

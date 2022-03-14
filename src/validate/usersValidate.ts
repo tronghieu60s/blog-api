@@ -19,6 +19,12 @@ export const joiUpdateSchema = Joi.object({
   display_name: Joi.string(),
 });
 
+export const joiAuthSchema = Joi.object({
+  login: Joi.string().required(),
+  password: Joi.string().required(),
+  outdated: Joi.string(),
+});
+
 export const joiRegisterSchema = Joi.object({
   user_login: Joi.string().required(),
   user_pass: Joi.string().required(),

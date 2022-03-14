@@ -2,15 +2,22 @@ import cors from "cors";
 import "dotenv/config";
 import express, { Express, NextFunction, Request, Response } from "express";
 import helmet from "helmet";
+import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import logger from "morgan";
 import { sendResponseError } from "./src/helpers/commonFuncs";
-import usersRouter from "./src/routers/usersRouter";
+import authRouter from "./src/routers/authRouter";
 import postsRouter from "./src/routers/postsRouter";
+import usersRouter from "./src/routers/usersRouter";
 import { ResponseError } from "./src/types/common";
 
 const app: Express = express();
-const { PORT = 3000, NODE_ENV, MONGODB_URI } = process.env;
+const {
+  PORT = 3000,
+  NODE_ENV,
+  MONGODB_URI,
+  APP_TOKEN_JWT_KEY = "",
+} = process.env;
 
 /* Middleware */
 app.use(cors());
@@ -42,6 +49,26 @@ app.use(
 );
 
 /* Routers */
+app.use((req, res, next) => {
+  if (req.url === "/auth" || req.url === "/register") {
+    return next();
+  }
+
+  const token = req.headers?.authorization || "Empty";
+  jwt.verify(token, APP_TOKEN_JWT_KEY, function (err, decoded) {
+    if (err) {
+      return sendResponseError(res, { status: 401, message: "Unauthorized" });
+    }
+    if (decoded) {
+      if ((decoded as any).outdated < Date.now()) {
+        return sendResponseError(res, { status: 403, message: "Forbidden" });
+      }
+      return next();
+    }
+  });
+});
+
+app.use("/", authRouter);
 app.use("/users", usersRouter);
 app.use("/posts", postsRouter);
 

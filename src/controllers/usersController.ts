@@ -6,7 +6,7 @@ import {
 import * as UsersModal from "../models/usersModel";
 import { ResponseResult } from "../types/common";
 
-const { APP_PAGINATION_LIMIT_DEFAULT } = process.env;
+const { APP_PAGINATION_LIMIT_DEFAULT, APP_TOKEN_EXPIRES_IN } = process.env;
 
 export const getUsers = async (req: Request, res: Response) => {
   const q = String(req.query?.q || "");
@@ -85,8 +85,11 @@ export const deleteUser = async (req: Request, res: Response) => {
 };
 
 export const authUser = async (req: Request, res: Response) => {
-  const { login, password } = req.body;
-  const item = await UsersModal.authUser(login, password);
+  const login = String(req.body?.login || "");
+  const password = String(req.body?.password || "");
+  const outdated = Number(req.body?.outdated || APP_TOKEN_EXPIRES_IN);
+
+  const item = await UsersModal.authUser(login, password, outdated);
   const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({
     data,
@@ -96,7 +99,7 @@ export const authUser = async (req: Request, res: Response) => {
 
 export const registerUser = async (req: Request, res: Response) => {
   const item = await UsersModal.registerUser(req.body);
-  const data = item ? { items: [item] } : {};
+  const data = item ? { items: [{ user: item }] } : {};
   const results: ResponseResult = initResponseResult({
     data,
   });
