@@ -2,7 +2,7 @@ export type ResponseRows = PaginationParams & {
   items: any[];
 };
 export type ResponseResult = {
-  data: any[] | ResponseRows;
+  data?: any | ResponseRows;
   insertId?: string | null;
   rowsAffected?: number | null;
 };

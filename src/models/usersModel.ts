@@ -46,7 +46,7 @@ const UsersSchema = new Schema(
   }
 );
 
-export const joiSchema = Joi.object({
+export const joiCreateSchema = Joi.object({
   user_login: Joi.string().required(),
   user_pass: Joi.string().required(),
   user_nicename: Joi.string(),
@@ -56,17 +56,32 @@ export const joiSchema = Joi.object({
   display_name: Joi.string(),
 });
 
-UsersSchema.post("validate", async function (doc) {
+export const joiUpdateSchema = Joi.object({
+  user_pass: Joi.string(),
+  user_nicename: Joi.string(),
+  user_email: Joi.string(),
+  user_url: Joi.string(),
+  user_status: Joi.number(),
+  display_name: Joi.string(),
+});
+
+UsersSchema.pre("save", async function () {
   // Encode password
-  doc.user_pass = await bcrypt.hash(doc.user_pass, 10);
+  this.user_pass = await bcrypt.hash(this.user_pass, 10);
 
   // Set default value
-  doc.user_nicename = doc.user_nicename || doc.user_login;
-  doc.display_name = doc.display_name || doc.user_login;
+  this.user_nicename = this.user_nicename || this.user_login;
+  this.display_name = this.display_name || this.user_login;
 
   // Generate activation key
   const generateKey = randomIntByLength(6);
-  doc.user_activation_key = await bcrypt.hash(generateKey, 10);
+  this.user_activation_key = await bcrypt.hash(generateKey, 10);
+});
+
+UsersSchema.pre("findOneAndUpdate", async function () {
+  const doc = (this as any)._update;
+  // Encode password
+  doc.user_pass = await bcrypt.hash(doc.user_pass, 10);
 });
 
 export const UsersModel = mongoose.model("wp_users", UsersSchema);
@@ -78,14 +93,28 @@ export const getUser = async (id: string) => {
 export const getUsers = async (args: GetUsersParams) => {
   const { q, search, page, pageSize: limit, order, orderby } = args;
   const skip = limit * page - limit;
-  const sort = [[orderby, order]];
+  const sort = { [orderby]: order };
 
   const query = search ? { [search]: new RegExp(q, "i") } : {};
-  const items = await UsersModel.find(query).limit(limit).skip(skip).sort(sort).exec();
+  const items = await UsersModel.find(query, {}, { skip, limit, sort }).exec();
   const count = await UsersModel.countDocuments(query);
   return { items, count };
 };
 
 export const createUser = async (args: CreateUserParams) => {
-  return new UsersModel(checkErrorJoiValidate(joiSchema.validate(args))).save();
+  return new UsersModel(
+    checkErrorJoiValidate(joiCreateSchema.validate(args))
+  ).save();
+};
+
+export const updateUser = async (id: string, args: CreateUserParams) => {
+  return await UsersModel.findOneAndUpdate(
+    { _id: id },
+    checkErrorJoiValidate(joiUpdateSchema.validate(args)),
+    { new: true }
+  );
+};
+
+export const deleteUser = async (id: string) => {
+  return await UsersModel.findOneAndDelete({ _id: id }).exec();
 };

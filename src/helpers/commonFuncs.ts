@@ -1,5 +1,7 @@
 import Joi from "joi";
-import { ResponseCommon, ResponseError } from "../types/common";
+import { ResponseCommon, ResponseError, ResponseResult } from "../types/common";
+
+/* Validate Functions */
 
 export const checkErrorJoiValidate = ({
   error,
@@ -11,18 +13,23 @@ export const checkErrorJoiValidate = ({
   return value;
 };
 
-export const sendResponseSuccess = (args: ResponseCommon): ResponseCommon => ({
-  status: 200,
-  success: true,
-  results: {
-    data: {} as any,
-    insertId: null,
-    rowsAffected: null,
-  },
+/* Response Functions */
+
+export const sendResponseResult = (args?: ResponseResult): ResponseResult => ({
+  data: {},
+  insertId: null,
+  rowsAffected: 0,
   ...(args as {}),
 });
 
-export const sendResponseError = (args: ResponseError): ResponseError => ({
+export const sendResponseSuccess = (args?: ResponseCommon): ResponseCommon => ({
+  status: 200,
+  success: true,
+  results: sendResponseResult(),
+  ...(args as {}),
+});
+
+export const sendResponseError = (args?: ResponseError): ResponseError => ({
   status: 500,
   success: false,
   message: "Internal Server Error",
@@ -30,6 +37,10 @@ export const sendResponseError = (args: ResponseError): ResponseError => ({
   ...(args as {}),
 });
 
+/* Common Functions */
+
 export const randomIntByLength = (length: number) => {
-  return Math.random().toString().slice(2, length + 2);
+  return Math.random()
+    .toString()
+    .slice(2, length + 2);
 };
