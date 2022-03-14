@@ -23,7 +23,7 @@ export const create = async (req: Request, res: Response) => {
   const rows = await createUser(req.body);
 
   const results = {
-    rows,
+    rows: [rows],
     insertId: rows._id,
     rowsAffected: 1,
   };

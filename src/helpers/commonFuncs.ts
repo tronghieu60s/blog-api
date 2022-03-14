@@ -1,3 +1,4 @@
+import Joi from "joi";
 import { ResponseCommon, ResponseError } from "../types/common";
 
 export const sendResponseSuccess = (args: ResponseCommon): ResponseCommon => ({
@@ -14,3 +15,13 @@ export const sendResponseError = (args: ResponseError): ResponseError => ({
   errors: new Error(""),
   ...(args as {}),
 });
+
+export const checkErrorJoiValidate = ({
+  error,
+  value,
+}: Joi.ValidationResult<any>) => {
+  if (error) {
+    throw error.details[0];
+  }
+  return value;
+};

@@ -1,5 +1,7 @@
 import bcrypt from "bcrypt";
+import Joi from "joi";
 import mongoose from "mongoose";
+import { checkErrorJoiValidate } from "../helpers/commonFuncs";
 import { CreateUserParams, GetUsersParams } from "../types/usersTypes";
 
 const Schema = mongoose.Schema;
@@ -12,6 +14,7 @@ const UsersSchema = new Schema(
       unique: true,
       maxlength: 60,
       match: /^(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/,
+      trim: true,
     },
     user_pass: { type: String, required: true },
     user_nicename: { type: String, default: "", maxlength: 50 },
@@ -21,8 +24,14 @@ const UsersSchema = new Schema(
       unique: true,
       maxlength: 100,
       match: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+      trim: true,
     },
-    user_url: { type: String, default: "", maxlength: 100 },
+    user_url: {
+      type: String,
+      default: "",
+      maxlength: 100,
+      trim: true,
+    },
     user_registered: { type: Date, required: true, default: Date.now },
     user_activation_key: { type: String, default: "" },
     user_status: { type: Number, default: 0 },
@@ -34,25 +43,35 @@ const UsersSchema = new Schema(
   }
 );
 
+export const joiSchema = Joi.object({
+  user_login: Joi.string().required(),
+  user_pass: Joi.string().required(),
+  user_nicename: Joi.string(),
+  user_email: Joi.string().required(),
+  user_url: Joi.string(),
+  user_status: Joi.number(),
+  display_name: Joi.string(),
+});
+
+UsersSchema.post("validate", async function (doc) {
+  doc.user_pass = await bcrypt.hash(doc.user_pass, 10);
+  doc.user_nicename = doc.user_nicename || doc.user_login;
+  doc.display_name = doc.display_name || doc.user_login;
+});
+
 export const UsersModel = mongoose.model("wp_users", UsersSchema);
 
 export const getUser = async (id: string) => {
-  const findUser = await UsersModel.findById(id).exec();
-  return findUser;
+  return await UsersModel.findById(id).exec();
 };
 
 export const getUsers = async (args?: GetUsersParams) => {
   const skip = args?.page || 1;
   const limit = args?.pageSize || -1;
 
-  const findUsers = await UsersModel.find({}, {}, { skip, limit }).exec();
-  return findUsers;
+  return await UsersModel.find({}, {}, { skip, limit }).exec();
 };
 
 export const createUser = async (args: CreateUserParams) => {
-  let { user_pass } = args;
-  user_pass = await bcrypt.hash(user_pass, 10);
-
-  const createUser = new UsersModel({ ...args, user_pass }).save();
-  return createUser;
+  return new UsersModel(checkErrorJoiValidate(joiSchema.validate(args))).save();
 };
