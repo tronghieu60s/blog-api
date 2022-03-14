@@ -1,7 +1,10 @@
 import bcrypt from "bcrypt";
 import Joi from "joi";
 import mongoose from "mongoose";
-import { checkErrorJoiValidate, randomIntByLength } from "../helpers/commonFuncs";
+import {
+  checkErrorJoiValidate,
+  randomIntByLength,
+} from "../helpers/commonFuncs";
 import { CreateUserParams, GetUsersParams } from "../types/usersTypes";
 
 const Schema = mongoose.Schema;
@@ -73,11 +76,14 @@ export const getUser = async (id: string) => {
 };
 
 export const getUsers = async (args: GetUsersParams) => {
-  const { page, pageSize: limit } = args;
+  const { q, search, page, pageSize: limit, order, orderby } = args;
   const skip = limit * page - limit;
-  const sort = [["user_registered", "descending"]];
+  const sort = [[orderby, order]];
 
-  return await UsersModel.find({}).limit(limit).skip(skip).sort(sort).exec();
+  const query = search ? { [search]: new RegExp(q, "i") } : {};
+  const items = await UsersModel.find(query).limit(limit).skip(skip).sort(sort).exec();
+  const count = await UsersModel.countDocuments(query);
+  return { items, count };
 };
 
 export const createUser = async (args: CreateUserParams) => {

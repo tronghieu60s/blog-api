@@ -1,6 +1,10 @@
 export type GetUsersParams = {
+  q: string;
+  search: string;
   page: number;
   pageSize: number;
+  order: string;
+  orderby: string;
 };
 
 export type CreateUserParams = {
