@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import Joi from "joi";
 import mongoose from "mongoose";
-import { checkErrorJoiValidate } from "../helpers/commonFuncs";
+import { checkErrorJoiValidate, randomIntByLength } from "../helpers/commonFuncs";
 import { CreateUserParams, GetUsersParams } from "../types/usersTypes";
 
 const Schema = mongoose.Schema;
@@ -54,9 +54,16 @@ export const joiSchema = Joi.object({
 });
 
 UsersSchema.post("validate", async function (doc) {
+  // Encode password
   doc.user_pass = await bcrypt.hash(doc.user_pass, 10);
+
+  // Set default value
   doc.user_nicename = doc.user_nicename || doc.user_login;
   doc.display_name = doc.display_name || doc.user_login;
+
+  // Generate activation key
+  const generateKey = randomIntByLength(6);
+  doc.user_activation_key = await bcrypt.hash(generateKey, 10);
 });
 
 export const UsersModel = mongoose.model("wp_users", UsersSchema);
@@ -65,11 +72,12 @@ export const getUser = async (id: string) => {
   return await UsersModel.findById(id).exec();
 };
 
-export const getUsers = async (args?: GetUsersParams) => {
-  const skip = args?.page || 1;
-  const limit = args?.pageSize || -1;
+export const getUsers = async (args: GetUsersParams) => {
+  const { page, pageSize: limit } = args;
+  const skip = limit * page - limit;
+  const sort = [["user_registered", "descending"]];
 
-  return await UsersModel.find({}, {}, { skip, limit }).exec();
+  return await UsersModel.find({}).limit(limit).skip(skip).sort(sort).exec();
 };
 
 export const createUser = async (args: CreateUserParams) => {

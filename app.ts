@@ -1,5 +1,5 @@
 import cors from "cors";
-import dotenv from "dotenv";
+import "dotenv/config";
 import express, { Express, NextFunction, Request, Response } from "express";
 import helmet from "helmet";
 import mongoose from "mongoose";
@@ -7,8 +7,6 @@ import logger from "morgan";
 import { sendResponseError } from "./src/helpers/commonFuncs";
 import usersRouter from "./src/routers/usersRouter";
 import { ResponseError } from "./src/types/common";
-
-dotenv.config();
 
 const app: Express = express();
 const { PORT = 3000, NODE_ENV, MONGODB_URI } = process.env;
