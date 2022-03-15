@@ -1,18 +1,25 @@
 import PromiseRouter from "express-promise-router";
 import * as usersController from "../controllers/usersController";
-import { joiCommonValidate } from "../validate/commonValidate";
-import { joiCreateUserSchema, joiUpdateUserSchema } from "../validate/usersValidate";
+import {
+  joiCommonValidateBody,
+  joiCommonValidateQuery
+} from "../helpers/commonFuncs";
+import { joiFilterSchema } from "../validate/commonValidate";
+import {
+  joiCreateUserSchema,
+  joiUpdateUserSchema
+} from "../validate/usersValidate";
 
 const router = PromiseRouter();
 
 router
   .route("/")
-  .get(usersController.getUsers)
-  .post(joiCommonValidate(joiCreateUserSchema), usersController.createUser);
+  .get(joiCommonValidateQuery(joiFilterSchema), usersController.getUsers)
+  .post(joiCommonValidateBody(joiCreateUserSchema), usersController.createUser);
 router
   .route("/:id")
   .get(usersController.getUser)
-  .put(joiCommonValidate(joiUpdateUserSchema), usersController.updateUser)
+  .put(joiCommonValidateBody(joiUpdateUserSchema), usersController.updateUser)
   .delete(usersController.deleteUser);
 
 export default router;

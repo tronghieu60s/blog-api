@@ -66,3 +66,23 @@ export const createPost = async (req: Request, res: Response) => {
   });
   return sendResponseSuccess(res, { results });
 };
+
+export const updateUser = async (req: Request, res: Response) => {
+  const id = String(req.params?.id || "");
+  const item = await PostsModel.updatePost(id, req.body);
+  const data = item ? { items: [item] } : {};
+  const results: ResponseResult = initResponseResult({
+    data,
+    rowsAffected: item ? 1 : 0,
+  });
+  return sendResponseSuccess(res, { results });
+};
+
+export const deleteUser = async (req: Request, res: Response) => {
+  const id = String(req.params?.id || "");
+  const item = await PostsModel.deletePost(id);
+  const results: ResponseResult = initResponseResult({
+    rowsAffected: item ? 1 : 0,
+  });
+  return sendResponseSuccess(res, { results });
+};

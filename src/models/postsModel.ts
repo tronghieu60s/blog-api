@@ -95,3 +95,11 @@ export const getPosts = async (args: FilterParams) => {
 export const createPost = async (args: any) => {
   return new PostsModel(args).save();
 };
+
+export const updatePost = async (id: string, args: any) => {
+  return await PostsModel.findOneAndUpdate({ _id: id }, args, { new: true });
+};
+
+export const deletePost = async (id: string) => {
+  return await PostsModel.findOneAndDelete({ _id: id }).exec();
+};

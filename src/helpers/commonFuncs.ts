@@ -1,5 +1,37 @@
-import { Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { ResponseCommon, ResponseError, ResponseResult } from "../types/commonTypes";
+import Joi from "joi";
+
+/* Common Functions */
+
+export const randomIntByLength = (length: number) => {
+  return Math.random()
+    .toString()
+    .slice(2, length + 2);
+};
+
+export const joiCommonValidateQuery = (schema: Joi.ObjectSchema<any>) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const { error } = schema.validate(req.query);
+    if (error) {
+      const message = error?.details[0]?.message;
+      return sendResponseError(res, { status: 404, message });
+    }
+    next();
+  };
+};
+
+export const joiCommonValidateBody = (schema: Joi.ObjectSchema<any>) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const { error } = schema.validate(req.body);
+    if (error) {
+      const errors = error?.details[0];
+      const message = error?.details[0]?.message;
+      return sendResponseError(res, { status: 400, message, errors });
+    }
+    next();
+  };
+};
 
 /* Response Functions */
 
@@ -29,12 +61,4 @@ export const sendResponseError = (res: Response, args?: ResponseError) => {
     ...(args as {}),
   };
   return res.status(response.status).json(response);
-};
-
-/* Common Functions */
-
-export const randomIntByLength = (length: number) => {
-  return Math.random()
-    .toString()
-    .slice(2, length + 2);
 };
