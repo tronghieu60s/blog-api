@@ -32,6 +32,8 @@ const UsersSchema = new Schema(
       type: String,
       default: "",
       maxlength: 100,
+      match:
+        /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/,
       trim: true,
     },
     user_registered: { type: Date, required: true, default: Date.now },

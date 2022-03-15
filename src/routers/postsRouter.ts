@@ -4,7 +4,7 @@ import {
   joiCommonValidateBody,
   joiCommonValidateQuery
 } from "../helpers/commonFuncs";
-import { joiFilterSchema } from "../validate/commonValidate";
+import { joiFilterSchema } from "../validate";
 import { joiCreatePostsSchema, joiUpdatePostsSchema } from "../validate/postsValidate";
 
 const router = PromiseRouter();
@@ -19,7 +19,7 @@ router
 router
   .route("/:id")
   .get(postsController.getPost)
-  .put(joiCommonValidateBody(joiUpdatePostsSchema), postsController.updateUser)
-  .delete(postsController.deleteUser);
+  .put(joiCommonValidateBody(joiUpdatePostsSchema), postsController.updatePost)
+  .delete(postsController.deletePost);
 
 export default router;

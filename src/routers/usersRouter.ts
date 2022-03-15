@@ -4,7 +4,7 @@ import {
   joiCommonValidateBody,
   joiCommonValidateQuery
 } from "../helpers/commonFuncs";
-import { joiFilterSchema } from "../validate/commonValidate";
+import { joiFilterSchema } from "../validate";
 import {
   joiCreateUserSchema,
   joiUpdateUserSchema

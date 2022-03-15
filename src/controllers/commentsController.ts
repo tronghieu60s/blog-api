@@ -3,14 +3,14 @@ import {
   initResponseResult,
   sendResponseSuccess,
 } from "../helpers/commonFuncs";
-import * as PostsModel from "../models/postsModel";
+import * as CommentsModel from "../models/commentsModel";
 import { ResponseResult } from "../types/commonTypes";
 
 const { APP_PAGINATION_LIMIT_DEFAULT } = process.env;
 
-export const getPost = async (req: Request, res: Response) => {
+export const getComment = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
-  const item = await PostsModel.getPost(id);
+  const item = await CommentsModel.getComment(id);
   const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({
     data,
@@ -18,7 +18,7 @@ export const getPost = async (req: Request, res: Response) => {
   return sendResponseSuccess(res, { results });
 };
 
-export const getPosts = async (req: Request, res: Response) => {
+export const getComments = async (req: Request, res: Response) => {
   const q = String(req.query?.q || "");
   const search = String(req.query?.search || "");
   const page = Number(req.query?.page || 1);
@@ -26,7 +26,7 @@ export const getPosts = async (req: Request, res: Response) => {
   const order = String(req.query?.order || "desc");
   const orderby = String(req.query?.orderby || "updated_at");
 
-  const { items, count } = await PostsModel.getPosts({
+  const { items, count } = await CommentsModel.getComments({
     q,
     search,
     page,
@@ -53,8 +53,8 @@ export const getPosts = async (req: Request, res: Response) => {
   return sendResponseSuccess(res, { results });
 };
 
-export const createPost = async (req: Request, res: Response) => {
-  const item = await PostsModel.createPost({
+export const createComment = async (req: Request, res: Response) => {
+  const item = await CommentsModel.createComment({
     ...req.body,
     post_author: (req as any).login,
   });
@@ -67,9 +67,9 @@ export const createPost = async (req: Request, res: Response) => {
   return sendResponseSuccess(res, { results });
 };
 
-export const updatePost = async (req: Request, res: Response) => {
+export const updateComment = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
-  const item = await PostsModel.updatePost(id, req.body);
+  const item = await CommentsModel.updateComment(id, req.body);
   const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({
     data,
@@ -78,9 +78,9 @@ export const updatePost = async (req: Request, res: Response) => {
   return sendResponseSuccess(res, { results });
 };
 
-export const deletePost = async (req: Request, res: Response) => {
+export const deleteComment = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
-  const item = await PostsModel.deletePost(id);
+  const item = await CommentsModel.deleteComment(id);
   const results: ResponseResult = initResponseResult({
     rowsAffected: item ? 1 : 0,
   });

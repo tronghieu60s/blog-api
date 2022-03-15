@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import logger from "morgan";
 import { sendResponseError } from "./src/helpers/commonFuncs";
 import authRouter from "./src/routers/authRouter";
+import commentsRouter from "./src/routers/commentsRouter";
 import postsRouter from "./src/routers/postsRouter";
 import usersRouter from "./src/routers/usersRouter";
 import { ResponseError } from "./src/types/commonTypes";
@@ -50,7 +51,11 @@ app.use(
 
 /* Routers */
 app.use((req, res, next) => {
-  if (req.url.indexOf("/users") === -1 && req.url.indexOf("/posts") === -1) {
+  if (
+    req.url.indexOf("/users") === -1 &&
+    req.url.indexOf("/posts") === -1 &&
+    req.url.indexOf("/comments") === -1
+  ) {
     return next();
   }
 
@@ -70,6 +75,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/", authRouter);
+app.use("/comments", commentsRouter);
 app.use("/users", usersRouter);
 app.use("/posts", postsRouter);
 
