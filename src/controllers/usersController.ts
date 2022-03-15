@@ -8,6 +8,16 @@ import { ResponseResult } from "../types/commonTypes";
 
 const { APP_PAGINATION_LIMIT_DEFAULT, APP_TOKEN_EXPIRES_IN } = process.env;
 
+export const getUser = async (req: Request, res: Response) => {
+  const id = String(req.params?.id || "");
+  const item = await UsersModal.getUser(id);
+  const data = item ? { items: [item] } : {};
+  const results: ResponseResult = initResponseResult({
+    data,
+  });
+  return sendResponseSuccess(res, { results });
+};
+
 export const getUsers = async (req: Request, res: Response) => {
   const q = String(req.query?.q || "");
   const search = String(req.query?.search || "");
@@ -37,16 +47,6 @@ export const getUsers = async (req: Request, res: Response) => {
     previousPage,
   };
 
-  const results: ResponseResult = initResponseResult({
-    data,
-  });
-  return sendResponseSuccess(res, { results });
-};
-
-export const getUser = async (req: Request, res: Response) => {
-  const id = String(req.params?.id || "");
-  const item = await UsersModal.getUser(id);
-  const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({
     data,
   });

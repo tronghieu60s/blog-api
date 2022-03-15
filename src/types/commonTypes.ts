@@ -1,10 +1,17 @@
-export type ResponseRows = PaginationParams & {
+export type ResponseRows = ResponsePaginationResult & {
   items: any[];
 };
 export type ResponseResult = {
   data?: any | ResponseRows;
   insertId?: string | null;
   rowsAffected?: number | null;
+};
+export type ResponsePaginationResult = {
+  page?: number;
+  pageSize?: number;
+  pageTotal?: number;
+  nextPage?: number | null;
+  previousPage?: number | null;
 };
 export type ResponseCommon = {
   status?: number;
@@ -14,19 +21,11 @@ export type ResponseCommon = {
 };
 export type ResponseError = ResponseCommon & { errors?: Error | ResponseError };
 
-export type PaginationParams = {
+export type FilterParams = {
+  q?: string;
+  search?: string;
   page?: number;
   pageSize?: number;
-  pageTotal?: number;
-  nextPage?: number | null;
-  previousPage?: number | null;
-};
-
-export type GetUsersParams = {
-  q: string;
-  search: string;
-  page: number;
-  pageSize: number;
-  order: string;
-  orderby: string;
+  order?: string;
+  orderby?: string;
 };

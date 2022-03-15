@@ -1,4 +1,7 @@
 import mongoose from "mongoose";
+import { FilterParams } from "../types/commonTypes";
+
+const { APP_PAGINATION_LIMIT_DEFAULT } = process.env;
 
 const Schema = mongoose.Schema;
 
@@ -66,6 +69,28 @@ PostsSchema.pre("save", async function () {
 });
 
 export const PostsModel = mongoose.model("wp_posts", PostsSchema);
+
+export const getPost = async (id: string) => {
+  return await PostsModel.findById(id).exec();
+};
+
+export const getPosts = async (args: FilterParams) => {
+  const {
+    q = "",
+    search,
+    page = 1,
+    pageSize: limit = Number(APP_PAGINATION_LIMIT_DEFAULT),
+    order,
+    orderby = "",
+  } = args;
+  const skip = limit * page - limit;
+  const sort = { [orderby]: order };
+
+  const query = search ? { [search]: new RegExp(q, "i") } : {};
+  const items = await PostsModel.find(query, {}, { skip, limit, sort }).exec();
+  const count = await PostsModel.countDocuments(query);
+  return { items, count };
+};
 
 export const createPost = async (args: any) => {
   return new PostsModel(args).save();

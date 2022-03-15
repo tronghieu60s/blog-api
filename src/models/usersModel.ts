@@ -2,9 +2,9 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { randomIntByLength } from "../helpers/commonFuncs";
-import { GetUsersParams } from "../types/commonTypes";
+import { FilterParams } from "../types/commonTypes";
 
-const { APP_TOKEN_JWT_KEY = "" } = process.env;
+const { APP_TOKEN_JWT_KEY = "", APP_PAGINATION_LIMIT_DEFAULT } = process.env;
 
 const Schema = mongoose.Schema;
 
@@ -70,8 +70,15 @@ export const getUser = async (id: string) => {
   return await UsersModel.findById(id).exec();
 };
 
-export const getUsers = async (args: GetUsersParams) => {
-  const { q, search, page, pageSize: limit, order, orderby } = args;
+export const getUsers = async (args: FilterParams) => {
+  const {
+    q = "",
+    search,
+    page = 1,
+    pageSize: limit = Number(APP_PAGINATION_LIMIT_DEFAULT),
+    order,
+    orderby = "",
+  } = args;
   const skip = limit * page - limit;
   const sort = { [orderby]: order };
 

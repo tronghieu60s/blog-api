@@ -7,6 +7,8 @@ const router = PromiseRouter();
 
 router
   .route("/")
+  .get(postsController.getPosts)
   .post(joiCommonValidate(joiCreatePostsSchema), postsController.createPost);
+router.route("/:id").get(postsController.getPost);
 
 export default router;
