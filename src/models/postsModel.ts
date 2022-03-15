@@ -71,7 +71,9 @@ PostsSchema.pre("save", async function () {
 export const PostsModel = mongoose.model("wp_posts", PostsSchema);
 
 export const getPost = async (id: string) => {
-  return await PostsModel.findById(id).exec();
+  return await PostsModel.findById(id)
+    .populate("post_author")
+    .populate("post_parent");
 };
 
 export const getPosts = async (args: FilterParams) => {

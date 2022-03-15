@@ -50,7 +50,7 @@ app.use(
 
 /* Routers */
 app.use((req, res, next) => {
-  if (req.url === "/auth" || req.url === "/register") {
+  if (req.url.indexOf("/users") === -1 && req.url.indexOf("/posts") === -1) {
     return next();
   }
 
@@ -75,6 +75,10 @@ app.use("/posts", postsRouter);
 
 app.get("/", (req: Request, res: Response) => {
   return res.status(200).json({ status: 200, message: "OK!" });
+});
+
+app.get("/500", () => {
+  throw {};
 });
 
 app.use((req: Request, res: Response, next) => {
