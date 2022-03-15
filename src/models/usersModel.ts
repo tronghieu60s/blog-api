@@ -2,11 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { randomIntByLength } from "../helpers/commonFuncs";
-import {
-  CreateUserParams,
-  GetUsersParams,
-  RegisterUserParams,
-} from "../types/usersTypes";
+import { GetUsersParams } from "../types/commonTypes";
 
 const { APP_TOKEN_JWT_KEY = "" } = process.env;
 
@@ -85,11 +81,11 @@ export const getUsers = async (args: GetUsersParams) => {
   return { items, count };
 };
 
-export const createUser = async (args: CreateUserParams) => {
+export const createUser = async (args: any) => {
   return new UsersModel(args).save();
 };
 
-export const updateUser = async (id: string, args: CreateUserParams) => {
+export const updateUser = async (id: string, args: any) => {
   return await UsersModel.findOneAndUpdate({ _id: id }, args, { new: true });
 };
 
@@ -109,7 +105,7 @@ export const authUser = async (
     const isValid = await bcrypt.compare(password, user.user_pass);
     if (isValid) {
       const token = jwt.sign(
-        { login: user.user_login, outdated: Date.now() + outdated },
+        { login: user._id, outdated: Date.now() + outdated },
         APP_TOKEN_JWT_KEY
       );
       return { user, token };
@@ -118,6 +114,6 @@ export const authUser = async (
   return null;
 };
 
-export const registerUser = async (args: RegisterUserParams) => {
-  return await new UsersModel(args).save();;
+export const registerUser = async (args: any) => {
+  return await new UsersModel(args).save();
 };

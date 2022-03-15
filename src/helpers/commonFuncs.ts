@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { ResponseCommon, ResponseError, ResponseResult } from "../types/common";
+import { ResponseCommon, ResponseError, ResponseResult } from "../types/commonTypes";
 
 /* Response Functions */
 

@@ -9,7 +9,7 @@ import { sendResponseError } from "./src/helpers/commonFuncs";
 import authRouter from "./src/routers/authRouter";
 import postsRouter from "./src/routers/postsRouter";
 import usersRouter from "./src/routers/usersRouter";
-import { ResponseError } from "./src/types/common";
+import { ResponseError } from "./src/types/commonTypes";
 
 const app: Express = express();
 const {
@@ -63,6 +63,7 @@ app.use((req, res, next) => {
       if ((decoded as any).outdated < Date.now()) {
         return sendResponseError(res, { status: 403, message: "Forbidden" });
       }
+      (req as any).login = (decoded as any).login;
       return next();
     }
   });

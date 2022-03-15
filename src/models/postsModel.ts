@@ -33,7 +33,7 @@ const PostsSchema = new Schema(
       maxlength: 20,
     },
     post_password: { type: String, default: "" },
-    post_name: { type: String, default: "" },
+    post_name: { type: String, unique: true },
     to_ping: { type: String, default: "" },
     pinged: { type: String, default: "" },
     post_modified: { type: Date, default: Date.now },
@@ -60,4 +60,13 @@ const PostsSchema = new Schema(
   }
 );
 
+PostsSchema.pre("save", async function () {
+  // Set default value
+  this.post_name = this.post_name || this._id;
+});
+
 export const PostsModel = mongoose.model("wp_posts", PostsSchema);
+
+export const createPost = async (args: any) => {
+  return new PostsModel(args).save();
+};

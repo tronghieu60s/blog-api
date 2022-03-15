@@ -4,7 +4,7 @@ import {
   sendResponseSuccess,
 } from "../helpers/commonFuncs";
 import * as UsersModal from "../models/usersModel";
-import { ResponseResult } from "../types/common";
+import { ResponseResult } from "../types/commonTypes";
 
 const { APP_PAGINATION_LIMIT_DEFAULT, APP_TOKEN_EXPIRES_IN } = process.env;
 

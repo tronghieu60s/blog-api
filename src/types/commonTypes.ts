@@ -21,3 +21,12 @@ export type PaginationParams = {
   nextPage?: number | null;
   previousPage?: number | null;
 };
+
+export type GetUsersParams = {
+  q: string;
+  search: string;
+  page: number;
+  pageSize: number;
+  order: string;
+  orderby: string;
+};
