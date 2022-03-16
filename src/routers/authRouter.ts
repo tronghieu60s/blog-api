@@ -1,10 +1,7 @@
 import PromiseRouter from "express-promise-router";
 import * as usersController from "../controllers/usersController";
 import { joiCommonValidateBody } from "../helpers/commonFuncs";
-import {
-  joiAuthUserSchema,
-  joiRegisterUserSchema,
-} from "../validate/usersValidate";
+import { joiAuthUserSchema, joiRegisterUserSchema } from "../helpers/commonValidate";
 
 const router = PromiseRouter();
 

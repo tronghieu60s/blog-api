@@ -4,8 +4,11 @@ import {
   joiCommonValidateBody,
   joiCommonValidateQuery
 } from "../helpers/commonFuncs";
-import { joiFilterSchema } from "../validate";
-import { joiCreatePostsSchema, joiUpdatePostsSchema } from "../validate/postsValidate";
+import {
+  joiFilterSchema,
+  joiCreatePostsSchema,
+  joiUpdatePostsSchema,
+} from "../helpers/commonValidate";
 
 const router = PromiseRouter();
 

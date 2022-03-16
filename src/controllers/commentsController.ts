@@ -5,7 +5,7 @@ import {
 } from "../helpers/commonFuncs";
 import * as CommentsModel from "../models/commentsModel";
 import * as UsersModel from "../models/usersModel";
-import { ResponseResult } from "../types/commonTypes";
+import { ResponseResult } from "../helpers/commonTypes";
 
 const { APP_PAGINATION_LIMIT_DEFAULT } = process.env;
 

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { FilterParams } from "../types/commonTypes";
+import { FilterParams } from "../helpers/commonTypes";
 
 const { APP_PAGINATION_LIMIT_DEFAULT } = process.env;
 
@@ -64,11 +64,6 @@ const PostsSchema = new Schema(
   }
 );
 
-PostsSchema.pre("save", async function () {
-  // Set default value
-  this.post_name = this.post_name || this._id;
-});
-
 export const PostsModel = mongoose.model("wp_posts", PostsSchema);
 
 export const getPost = async (id: string) => {
@@ -97,6 +92,7 @@ export const getPosts = async (args: FilterParams) => {
 };
 
 export const createPost = async (args: any) => {
+  args.post_name = args.post_name || args._id;
   return new PostsModel(args).save();
 };
 

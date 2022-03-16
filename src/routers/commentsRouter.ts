@@ -4,14 +4,17 @@ import {
   joiCommonValidateBody,
   joiCommonValidateQuery
 } from "../helpers/commonFuncs";
-import { joiFilterSchema } from "../validate";
-import { joiCreateCommentsSchema, joiUpdateCommentsSchema } from "../validate/commentsValidate";
+import {
+  joiFilterSchema,
+  joiCreateCommentsSchema,
+  joiUpdateCommentsSchema,
+} from "../helpers/commonValidate";
 
 const router = PromiseRouter();
 
 router
   .route("/")
-  .get(joiCommonValidateQuery(joiFilterSchema), commentsController.getComments)
+  .get([joiCommonValidateQuery(joiFilterSchema)], commentsController.getComments)
   .post(
     joiCommonValidateBody(joiCreateCommentsSchema),
     commentsController.createComment

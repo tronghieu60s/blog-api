@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { randomIntByLength } from "../helpers/commonFuncs";
-import { FilterParams } from "../types/commonTypes";
+import { FilterParams } from "../helpers/commonTypes";
 
 const { APP_TOKEN_JWT_KEY = "", APP_PAGINATION_LIMIT_DEFAULT } = process.env;
 
@@ -60,12 +60,6 @@ UsersSchema.pre("save", async function () {
   this.user_activation_key = await bcrypt.hash(generateKey, 10);
 });
 
-UsersSchema.pre("findOneAndUpdate", async function () {
-  const doc = (this as any)._update;
-  // Encode password
-  doc.user_pass = await bcrypt.hash(doc.user_pass, 10);
-});
-
 export const UsersModel = mongoose.model("wp_users", UsersSchema);
 
 export const getUser = async (id: string) => {
@@ -91,10 +85,17 @@ export const getUsers = async (args: FilterParams) => {
 };
 
 export const createUser = async (args: any) => {
+  args.user_pass = await bcrypt.hash(args.user_pass, 10);
+  args.user_nicename = args.user_nicename || args.user_login;
+  args.display_name = args.display_name || args.user_login;
+
+  const activeKey = randomIntByLength(6);
+  args.user_activation_key = await bcrypt.hash(activeKey, 10);
   return new UsersModel(args).save();
 };
 
 export const updateUser = async (id: string, args: any) => {
+  args.user_pass = await bcrypt.hash(args.user_pass, 10);
   return await UsersModel.findOneAndUpdate({ _id: id }, args, { new: true });
 };
 
@@ -105,8 +106,9 @@ export const deleteUser = async (id: string) => {
 export const authUser = async (
   login: string,
   password: string,
-  outdated: number
+  options: { ip: string; expire: number }
 ) => {
+  const { ip, expire } = options;
   const user = await UsersModel.findOne({
     $or: [{ user_login: login }, { user_email: login }],
   }).exec();
@@ -114,7 +116,7 @@ export const authUser = async (
     const isValid = await bcrypt.compare(password, user.user_pass);
     if (isValid) {
       const token = jwt.sign(
-        { login: user._id, outdated: Date.now() + outdated },
+        { login: user._id, ip, expire: Date.now() + expire },
         APP_TOKEN_JWT_KEY
       );
       return { user, token };

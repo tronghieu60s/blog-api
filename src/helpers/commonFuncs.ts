@@ -1,6 +1,9 @@
-import { Request, Response, NextFunction } from "express";
-import { ResponseCommon, ResponseError, ResponseResult } from "../types/commonTypes";
+import { NextFunction, Request, Response } from "express";
 import Joi from "joi";
+import jwt from "jsonwebtoken";
+import { ResponseCommon, ResponseError, ResponseResult } from "./commonTypes";
+
+const { APP_TOKEN_JWT_KEY = "" } = process.env;
 
 /* Common Functions */
 
@@ -31,6 +34,34 @@ export const joiCommonValidateBody = (schema: Joi.ObjectSchema<any>) => {
     }
     next();
   };
+};
+
+export const basicAuthorization = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (req.url.indexOf("/users") === -1) {
+    return next();
+  }
+
+  const token = req.headers?.authorization || "Empty";
+  jwt.verify(token, APP_TOKEN_JWT_KEY, function (err, decoded) {
+    if (err) {
+      return sendResponseError(res, { status: 401, message: "Unauthorized" });
+    }
+    if (decoded) {
+      if ((decoded as any).ip !== req.ip) {
+        return sendResponseError(res, { status: 403, message: "Forbidden" });
+      }
+      if ((decoded as any).expire < Date.now()) {
+        return sendResponseError(res, { status: 403, message: "Forbidden" });
+      }
+      (req as any).login = (decoded as any).login;
+      return next();
+    }
+    return sendResponseError(res, { status: 404, message: "Not Found" });
+  });
 };
 
 /* Response Functions */

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { CreateCommentParams, FilterParams } from "../types/commonTypes";
+import { CreateCommentParams, FilterParams } from "../helpers/commonTypes";
 import { PostsModel } from "./postsModel";
 
 const { APP_PAGINATION_LIMIT_DEFAULT } = process.env;

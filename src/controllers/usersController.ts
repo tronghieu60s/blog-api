@@ -4,7 +4,7 @@ import {
   sendResponseSuccess,
 } from "../helpers/commonFuncs";
 import * as UsersModal from "../models/usersModel";
-import { ResponseResult } from "../types/commonTypes";
+import { ResponseResult } from "../helpers/commonTypes";
 
 const { APP_PAGINATION_LIMIT_DEFAULT, APP_TOKEN_EXPIRES_IN } = process.env;
 
@@ -85,11 +85,15 @@ export const deleteUser = async (req: Request, res: Response) => {
 };
 
 export const authUser = async (req: Request, res: Response) => {
+  const ip = req.ip;
   const login = String(req.body?.login || "");
   const password = String(req.body?.password || "");
-  const outdated = Number(req.body?.outdated || APP_TOKEN_EXPIRES_IN);
+  const expire = Number(req.body?.expire || APP_TOKEN_EXPIRES_IN);
 
-  const item = await UsersModal.authUser(login, password, outdated);
+  const item = await UsersModal.authUser(login, password, {
+    ip,
+    expire,
+  });
   const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({
     data,

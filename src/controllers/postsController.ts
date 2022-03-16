@@ -4,7 +4,7 @@ import {
   sendResponseSuccess,
 } from "../helpers/commonFuncs";
 import * as PostsModel from "../models/postsModel";
-import { ResponseResult } from "../types/commonTypes";
+import { ResponseResult } from "../helpers/commonTypes";
 
 const { APP_PAGINATION_LIMIT_DEFAULT } = process.env;
 
