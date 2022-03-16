@@ -1,8 +1,4 @@
 import mongoose from "mongoose";
-import { CreateCommentParams, FilterParams } from "../helpers/commonTypes";
-import { PostsModel } from "./postsModel";
-
-const { APP_PAGINATION_LIMIT_DEFAULT } = process.env;
 
 const Schema = mongoose.Schema;
 
@@ -64,46 +60,5 @@ const CommentsSchema = new Schema(
   }
 );
 
-export const CommentsModel = mongoose.model("wp_comments", CommentsSchema);
-
-export const getComment = async (id: string) => {
-  return await CommentsModel.findById(id)
-    .populate("post_id")
-    .populate("comment_parent")
-    .populate("user_id")
-    .exec();
-};
-
-export const getComments = async (args: FilterParams) => {
-  const {
-    q = "",
-    search,
-    page = 1,
-    pageSize: limit = Number(APP_PAGINATION_LIMIT_DEFAULT),
-    order,
-    orderby = "",
-  } = args;
-  const skip = limit * page - limit;
-  const sort = { [orderby]: order };
-
-  const query = search ? { [search]: new RegExp(q, "i") } : {};
-  const items = await CommentsModel.find(
-    query,
-    {},
-    { skip, limit, sort }
-  ).exec();
-  const count = await CommentsModel.countDocuments(query);
-  return { items, count };
-};
-
-export const createComment = async (args: CreateCommentParams) => {
-  return new CommentsModel(args).save();
-};
-
-export const updateComment = async (id: string, args: any) => {
-  return await CommentsModel.findOneAndUpdate({ _id: id }, args, { new: true });
-};
-
-export const deleteComment = async (id: string) => {
-  return await CommentsModel.findOneAndDelete({ _id: id }).exec();
-};
+const CommentsModel = mongoose.model("wp_comments", CommentsSchema);
+export default CommentsModel;

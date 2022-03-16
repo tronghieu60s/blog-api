@@ -3,14 +3,17 @@ import {
   initResponseResult,
   sendResponseSuccess,
 } from "../helpers/commonFuncs";
-import * as PostsModel from "../models/postsModel";
+import PostsModel from "../models/postsModel";
 import { ResponseResult } from "../helpers/commonTypes";
 
 const { APP_PAGINATION_LIMIT_DEFAULT } = process.env;
 
 export const getPost = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
-  const item = await PostsModel.getPost(id);
+  const item = await PostsModel.findById(id)
+    .populate("post_author")
+    .populate("post_parent")
+    .exec();
   const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({
     data,
@@ -26,14 +29,17 @@ export const getPosts = async (req: Request, res: Response) => {
   const order = String(req.query?.order || "desc");
   const orderby = String(req.query?.orderby || "updated_at");
 
-  const { items, count } = await PostsModel.getPosts({
-    q,
-    search,
-    page,
-    pageSize,
-    order,
-    orderby,
-  });
+  const skip = pageSize * page - pageSize;
+  const sort = { [orderby]: order };
+
+  const query = search ? { [search]: new RegExp(q, "i") } : {};
+  const items = await PostsModel.find(
+    query,
+    {},
+    { skip, limit: pageSize, sort }
+  ).exec();
+  const count = await PostsModel.countDocuments(query);
+
   const pageTotal = Math.ceil(count / pageSize);
   const nextPage = page >= pageTotal ? null : page + 1;
   const previousPage = page <= 1 ? null : page - 1;
@@ -54,10 +60,10 @@ export const getPosts = async (req: Request, res: Response) => {
 };
 
 export const createPost = async (req: Request, res: Response) => {
-  const item = await PostsModel.createPost({
+  const item = await new PostsModel({
     ...req.body,
     post_author: (req as any).login,
-  });
+  }).save();
   const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({
     data,
@@ -69,7 +75,9 @@ export const createPost = async (req: Request, res: Response) => {
 
 export const updatePost = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
-  const item = await PostsModel.updatePost(id, req.body);
+  const item = await PostsModel.findOneAndUpdate({ _id: id }, req.body, {
+    new: true,
+  });
   const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({
     data,
@@ -80,7 +88,7 @@ export const updatePost = async (req: Request, res: Response) => {
 
 export const deletePost = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
-  const item = await PostsModel.deletePost(id);
+  const item = await PostsModel.findOneAndDelete({ _id: id }).exec();
   const results: ResponseResult = initResponseResult({
     rowsAffected: item ? 1 : 0,
   });

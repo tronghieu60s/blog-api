@@ -1,10 +1,6 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { randomIntByLength } from "../helpers/commonFuncs";
-import { FilterParams } from "../helpers/commonTypes";
-
-const { APP_TOKEN_JWT_KEY = "", APP_PAGINATION_LIMIT_DEFAULT } = process.env;
 
 const Schema = mongoose.Schema;
 
@@ -60,71 +56,11 @@ UsersSchema.pre("save", async function () {
   this.user_activation_key = await bcrypt.hash(generateKey, 10);
 });
 
-export const UsersModel = mongoose.model("wp_users", UsersSchema);
+UsersSchema.pre("findOneAndUpdate", async function () {
+  const doc = (this as any)._update;
+  // Encode password
+  doc.user_pass = await bcrypt.hash(doc.user_pass, 10);
+});
 
-export const getUser = async (id: string) => {
-  return await UsersModel.findById(id).exec();
-};
-
-export const getUsers = async (args: FilterParams) => {
-  const {
-    q = "",
-    search,
-    page = 1,
-    pageSize: limit = Number(APP_PAGINATION_LIMIT_DEFAULT),
-    order,
-    orderby = "",
-  } = args;
-  const skip = limit * page - limit;
-  const sort = { [orderby]: order };
-
-  const query = search ? { [search]: new RegExp(q, "i") } : {};
-  const items = await UsersModel.find(query, {}, { skip, limit, sort }).exec();
-  const count = await UsersModel.countDocuments(query);
-  return { items, count };
-};
-
-export const createUser = async (args: any) => {
-  args.user_pass = await bcrypt.hash(args.user_pass, 10);
-  args.user_nicename = args.user_nicename || args.user_login;
-  args.display_name = args.display_name || args.user_login;
-
-  const activeKey = randomIntByLength(6);
-  args.user_activation_key = await bcrypt.hash(activeKey, 10);
-  return new UsersModel(args).save();
-};
-
-export const updateUser = async (id: string, args: any) => {
-  args.user_pass = await bcrypt.hash(args.user_pass, 10);
-  return await UsersModel.findOneAndUpdate({ _id: id }, args, { new: true });
-};
-
-export const deleteUser = async (id: string) => {
-  return await UsersModel.findOneAndDelete({ _id: id }).exec();
-};
-
-export const authUser = async (
-  login: string,
-  password: string,
-  options: { ip: string; expire: number }
-) => {
-  const { ip, expire } = options;
-  const user = await UsersModel.findOne({
-    $or: [{ user_login: login }, { user_email: login }],
-  }).exec();
-  if (user) {
-    const isValid = await bcrypt.compare(password, user.user_pass);
-    if (isValid) {
-      const token = jwt.sign(
-        { login: user._id, ip, expire: Date.now() + expire },
-        APP_TOKEN_JWT_KEY
-      );
-      return { user, token };
-    }
-  }
-  return null;
-};
-
-export const registerUser = async (args: any) => {
-  return await new UsersModel(args).save();
-};
+const UsersModel = mongoose.model("wp_users", UsersSchema);
+export default UsersModel;

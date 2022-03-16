@@ -3,15 +3,19 @@ import {
   initResponseResult,
   sendResponseSuccess,
 } from "../helpers/commonFuncs";
-import * as CommentsModel from "../models/commentsModel";
-import * as UsersModel from "../models/usersModel";
+import CommentsModel from "../models/commentsModel";
+import UsersModel from "../models/usersModel";
 import { ResponseResult } from "../helpers/commonTypes";
 
 const { APP_PAGINATION_LIMIT_DEFAULT } = process.env;
 
 export const getComment = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
-  const item = await CommentsModel.getComment(id);
+  const item = await CommentsModel.findById(id)
+    .populate("post_id")
+    .populate("comment_parent")
+    .populate("user_id")
+    .exec();
   const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({
     data,
@@ -27,14 +31,17 @@ export const getComments = async (req: Request, res: Response) => {
   const order = String(req.query?.order || "desc");
   const orderby = String(req.query?.orderby || "updated_at");
 
-  const { items, count } = await CommentsModel.getComments({
-    q,
-    search,
-    page,
-    pageSize,
-    order,
-    orderby,
-  });
+  const skip = pageSize * page - pageSize;
+  const sort = { [orderby]: order };
+
+  const query = search ? { [search]: new RegExp(q, "i") } : {};
+  const items = await CommentsModel.find(
+    query,
+    {},
+    { skip, limit: pageSize, sort }
+  ).exec();
+  const count = await CommentsModel.countDocuments(query);
+
   const pageTotal = Math.ceil(count / pageSize);
   const nextPage = page >= pageTotal ? null : page + 1;
   const previousPage = page <= 1 ? null : page - 1;
@@ -56,7 +63,7 @@ export const getComments = async (req: Request, res: Response) => {
 
 export const createComment = async (req: Request, res: Response) => {
   if ((req as any).login) {
-    const user = await UsersModel.getUser((req as any).login);
+    const user = await UsersModel.findById((req as any).login);
     req.body = {
       ...req.body,
       comment_author: req.body.comment_author || user.display_name,
@@ -66,7 +73,7 @@ export const createComment = async (req: Request, res: Response) => {
   }
   req.body.comment_author_ip = req.body.comment_author_ip || req.ip;
 
-  const item = await CommentsModel.createComment(req.body);
+  const item = await new CommentsModel(req.body).save();
   const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({
     data,
@@ -78,7 +85,9 @@ export const createComment = async (req: Request, res: Response) => {
 
 export const updateComment = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
-  const item = await CommentsModel.updateComment(id, req.body);
+  const item = await CommentsModel.findOneAndUpdate({ _id: id }, req.body, {
+    new: true,
+  });
   const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({
     data,
@@ -89,7 +98,7 @@ export const updateComment = async (req: Request, res: Response) => {
 
 export const deleteComment = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
-  const item = await CommentsModel.deleteComment(id);
+  const item = await CommentsModel.findOneAndDelete({ _id: id }).exec();
   const results: ResponseResult = initResponseResult({
     rowsAffected: item ? 1 : 0,
   });

@@ -1,7 +1,4 @@
 import mongoose from "mongoose";
-import { FilterParams } from "../helpers/commonTypes";
-
-const { APP_PAGINATION_LIMIT_DEFAULT } = process.env;
 
 const Schema = mongoose.Schema;
 
@@ -64,42 +61,10 @@ const PostsSchema = new Schema(
   }
 );
 
-export const PostsModel = mongoose.model("wp_posts", PostsSchema);
+PostsSchema.pre("save", async function () {
+  // Set default value
+  this.post_name = this.post_name || this._id;
+});
 
-export const getPost = async (id: string) => {
-  return await PostsModel.findById(id)
-    .populate("post_author")
-    .populate("post_parent")
-    .exec();
-};
-
-export const getPosts = async (args: FilterParams) => {
-  const {
-    q = "",
-    search,
-    page = 1,
-    pageSize: limit = Number(APP_PAGINATION_LIMIT_DEFAULT),
-    order,
-    orderby = "",
-  } = args;
-  const skip = limit * page - limit;
-  const sort = { [orderby]: order };
-
-  const query = search ? { [search]: new RegExp(q, "i") } : {};
-  const items = await PostsModel.find(query, {}, { skip, limit, sort }).exec();
-  const count = await PostsModel.countDocuments(query);
-  return { items, count };
-};
-
-export const createPost = async (args: any) => {
-  args.post_name = args.post_name || args._id;
-  return new PostsModel(args).save();
-};
-
-export const updatePost = async (id: string, args: any) => {
-  return await PostsModel.findOneAndUpdate({ _id: id }, args, { new: true });
-};
-
-export const deletePost = async (id: string) => {
-  return await PostsModel.findOneAndDelete({ _id: id }).exec();
-};
+const PostsModel = mongoose.model("wp_posts", PostsSchema);
+export default PostsModel;

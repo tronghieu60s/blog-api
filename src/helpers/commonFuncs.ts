@@ -51,10 +51,10 @@ export const basicAuthorization = (
       return sendResponseError(res, { status: 401, message: "Unauthorized" });
     }
     if (decoded) {
-      if ((decoded as any).ip !== req.ip) {
+      if ((decoded as any).login_ip !== req.ip) {
         return sendResponseError(res, { status: 403, message: "Forbidden" });
       }
-      if ((decoded as any).expire < Date.now()) {
+      if ((decoded as any).expire_in < Date.now()) {
         return sendResponseError(res, { status: 403, message: "Forbidden" });
       }
       (req as any).login = (decoded as any).login;

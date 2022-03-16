@@ -21,15 +21,6 @@ export type ResponseCommon = {
 };
 export type ResponseError = ResponseCommon & { errors?: Error | ResponseError };
 
-export type FilterParams = {
-  q?: string;
-  search?: string;
-  page?: number;
-  pageSize?: number;
-  order?: string;
-  orderby?: string;
-};
-
 export type CreateCommentParams = {
   post_id: string;
   comment_author: string;

@@ -50,9 +50,9 @@ app.use(
 
 /* Routers */
 app.use("/", authRouter);
-app.use("/comments", commentsRouter);
 app.use("/users", usersRouter);
 app.use("/posts", postsRouter);
+app.use("/comments", commentsRouter);
 
 app.get("/", (req: Request, res: Response) => {
   return res.status(200).json({ status: 200, message: "OK!" });

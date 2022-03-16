@@ -1,16 +1,23 @@
 import { Request, Response } from "express";
 import {
   initResponseResult,
+  sendResponseError,
   sendResponseSuccess,
 } from "../helpers/commonFuncs";
-import * as UsersModal from "../models/usersModel";
+import UsersModel from "../models/usersModel";
 import { ResponseResult } from "../helpers/commonTypes";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
-const { APP_PAGINATION_LIMIT_DEFAULT, APP_TOKEN_EXPIRES_IN } = process.env;
+const {
+  APP_TOKEN_JWT_KEY = "",
+  APP_PAGINATION_LIMIT_DEFAULT,
+  APP_TOKEN_EXPIRES_IN,
+} = process.env;
 
 export const getUser = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
-  const item = await UsersModal.getUser(id);
+  const item = await UsersModel.findById(id).exec();
   const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({
     data,
@@ -26,14 +33,17 @@ export const getUsers = async (req: Request, res: Response) => {
   const order = String(req.query?.order || "desc");
   const orderby = String(req.query?.orderby || "updated_at");
 
-  const { items, count } = await UsersModal.getUsers({
-    q,
-    search,
-    page,
-    pageSize,
-    order,
-    orderby,
-  });
+  const skip = pageSize * page - pageSize;
+  const sort = { [orderby]: order };
+
+  const query = search ? { [search]: new RegExp(q, "i") } : {};
+  const items = await UsersModel.find(
+    query,
+    {},
+    { skip, limit: pageSize, sort }
+  ).exec();
+  const count = await UsersModel.countDocuments(query);
+
   const pageTotal = Math.ceil(count / pageSize);
   const nextPage = page >= pageTotal ? null : page + 1;
   const previousPage = page <= 1 ? null : page - 1;
@@ -54,7 +64,7 @@ export const getUsers = async (req: Request, res: Response) => {
 };
 
 export const createUser = async (req: Request, res: Response) => {
-  const item = await UsersModal.createUser(req.body);
+  const item = await new UsersModel(req.body).save();
   const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({
     data,
@@ -66,7 +76,9 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const updateUser = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
-  const item = await UsersModal.updateUser(id, req.body);
+  const item = await UsersModel.findOneAndUpdate({ _id: id }, req.body, {
+    new: true,
+  });
   const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({
     data,
@@ -77,23 +89,59 @@ export const updateUser = async (req: Request, res: Response) => {
 
 export const deleteUser = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
-  const item = await UsersModal.deleteUser(id);
+  const item = await UsersModel.findOneAndDelete({ _id: id }).exec();
   const results: ResponseResult = initResponseResult({
     rowsAffected: item ? 1 : 0,
   });
   return sendResponseSuccess(res, { results });
 };
 
+export const noAuthUser = async (req: Request, res: Response) => {
+  const login_ip = req.ip;
+  const expire = Number(req.body?.expire || APP_TOKEN_EXPIRES_IN);
+
+  const token = jwt.sign(
+    { login: null, login_level: 0, login_ip, expire_in: Date.now() + expire },
+    APP_TOKEN_JWT_KEY
+  );
+  const item = { token };
+  const data = item ? { items: [item] } : {};
+  const results: ResponseResult = initResponseResult({
+    data,
+  });
+  return sendResponseSuccess(res, { results });
+};
+
 export const authUser = async (req: Request, res: Response) => {
-  const ip = req.ip;
   const login = String(req.body?.login || "");
+  const login_ip = req.ip;
   const password = String(req.body?.password || "");
   const expire = Number(req.body?.expire || APP_TOKEN_EXPIRES_IN);
 
-  const item = await UsersModal.authUser(login, password, {
-    ip,
-    expire,
-  });
+  const user = await UsersModel.findOne({
+    $or: [{ user_login: login }, { user_email: login }],
+  }).exec();
+
+  if (!user) {
+    return sendResponseError(res, { status: 401, message: "Invalid" });
+  }
+
+  const isValid = await bcrypt.compare(password, user.user_pass);
+  if (!isValid) {
+    return sendResponseError(res, { status: 401, message: "Invalid" });
+  }
+
+  const token = jwt.sign(
+    {
+      login: user._id,
+      login_level: 1,
+      login_ip,
+      expire_in: Date.now() + expire,
+    },
+    APP_TOKEN_JWT_KEY
+  );
+
+  const item = { user, token };
   const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({
     data,
@@ -102,7 +150,7 @@ export const authUser = async (req: Request, res: Response) => {
 };
 
 export const registerUser = async (req: Request, res: Response) => {
-  const item = await UsersModal.registerUser(req.body);
+  const item = await new UsersModel(req.body).save();
   const data = item ? { items: [{ user: item }] } : {};
   const results: ResponseResult = initResponseResult({
     data,
