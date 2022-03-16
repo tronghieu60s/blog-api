@@ -2,10 +2,10 @@ import Joi from "joi";
 
 export const joiCreateCommentsSchema = Joi.object({
   post_id: Joi.string().required(),
-  comment_author: Joi.string().required(),
-  comment_author_email: Joi.string().required(),
+  comment_author: Joi.string(),
+  comment_author_email: Joi.string(),
   comment_author_url: Joi.string(),
-  comment_author_ip: Joi.string().required(),
+  comment_author_ip: Joi.string(),
   comment_date: Joi.date(),
   comment_date_gmt: Joi.date(),
   comment_content: Joi.string().required(),
@@ -14,11 +14,9 @@ export const joiCreateCommentsSchema = Joi.object({
   comment_agent: Joi.string(),
   comment_type: Joi.string(),
   comment_parent: Joi.string(),
-  user_id: Joi.string(),
 });
 
 export const joiUpdateCommentsSchema = Joi.object({
-  post_id: Joi.string(),
   comment_author: Joi.string(),
   comment_author_email: Joi.string(),
   comment_author_url: Joi.string(),
@@ -30,6 +28,4 @@ export const joiUpdateCommentsSchema = Joi.object({
   comment_approved: Joi.number(),
   comment_agent: Joi.string(),
   comment_type: Joi.string(),
-  comment_parent: Joi.string(),
-  user_id: Joi.string(),
 });

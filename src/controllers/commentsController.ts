@@ -4,6 +4,7 @@ import {
   sendResponseSuccess,
 } from "../helpers/commonFuncs";
 import * as CommentsModel from "../models/commentsModel";
+import * as UsersModel from "../models/usersModel";
 import { ResponseResult } from "../types/commonTypes";
 
 const { APP_PAGINATION_LIMIT_DEFAULT } = process.env;
@@ -54,10 +55,18 @@ export const getComments = async (req: Request, res: Response) => {
 };
 
 export const createComment = async (req: Request, res: Response) => {
-  const item = await CommentsModel.createComment({
-    ...req.body,
-    post_author: (req as any).login,
-  });
+  if ((req as any).login) {
+    const user = await UsersModel.getUser((req as any).login);
+    req.body = {
+      ...req.body,
+      comment_author: req.body.comment_author || user.display_name,
+      comment_author_email: req.body.comment_author_email || user.user_email,
+      comment_author_url: req.body.comment_author_url || user.user_url,
+    };
+  }
+  req.body.comment_author_ip = req.body.comment_author_ip || req.ip;
+
+  const item = await CommentsModel.createComment(req.body);
   const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({
     data,

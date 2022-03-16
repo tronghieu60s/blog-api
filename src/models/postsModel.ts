@@ -45,6 +45,7 @@ const PostsSchema = new Schema(
     post_parent: {
       type: Schema.Types.ObjectId,
       ref: "wp_posts",
+      default: null,
     },
     guid: { type: String, default: "" },
     menu_order: { type: Number, default: 0 },

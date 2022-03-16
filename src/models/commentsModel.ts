@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-import { FilterParams } from "../types/commonTypes";
+import { CreateCommentParams, FilterParams } from "../types/commonTypes";
+import { PostsModel } from "./postsModel";
 
 const { APP_PAGINATION_LIMIT_DEFAULT } = process.env;
 
@@ -12,10 +13,10 @@ const CommentsSchema = new Schema(
       ref: "wp_posts",
       required: true,
     },
-    comment_author: { type: String, required: true },
+    comment_author: { type: String, default: "" },
     comment_author_email: {
       type: String,
-      required: true,
+      default: "",
       maxlength: 100,
       match: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       trim: true,
@@ -30,7 +31,10 @@ const CommentsSchema = new Schema(
     },
     comment_author_ip: {
       type: String,
-      required: true,
+      default: "",
+      maxlength: 100,
+      match:
+        /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
     },
     comment_date: { type: Date, default: Date.now },
     comment_date_gmt: { type: Date, default: Date.now },
@@ -46,11 +50,13 @@ const CommentsSchema = new Schema(
     comment_parent: {
       type: Schema.Types.ObjectId,
       ref: "wp_comments",
+      default: null,
     },
     user_id: {
       type: Schema.Types.ObjectId,
       ref: "wp_users",
-    }
+      default: null,
+    },
   },
   {
     collection: "wp_comments",
@@ -61,7 +67,11 @@ const CommentsSchema = new Schema(
 export const CommentsModel = mongoose.model("wp_comments", CommentsSchema);
 
 export const getComment = async (id: string) => {
-  return await CommentsModel.findById(id).exec();
+  return await CommentsModel.findById(id)
+    .populate("post_id")
+    .populate("comment_parent")
+    .populate("user_id")
+    .exec();
 };
 
 export const getComments = async (args: FilterParams) => {
@@ -86,7 +96,7 @@ export const getComments = async (args: FilterParams) => {
   return { items, count };
 };
 
-export const createComment = async (args: any) => {
+export const createComment = async (args: CreateCommentParams) => {
   return new CommentsModel(args).save();
 };
 
