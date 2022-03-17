@@ -19,7 +19,7 @@ const CommentsSchema = new Schema(
     },
     comment_author_url: {
       type: String,
-      required: true,
+      default: "",
       maxlength: 100,
       match:
         /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/,

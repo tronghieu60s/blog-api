@@ -6,8 +6,19 @@ import {
 import CommentsModel from "../models/commentsModel";
 import UsersModel from "../models/usersModel";
 import { ResponseResult } from "../helpers/commonTypes";
+import PostsModel from "../models/postsModel";
 
 const { APP_PAGINATION_LIMIT_DEFAULT } = process.env;
+
+const countCommentsPost = async (post_id?: string) => {
+  if (post_id) {
+    const count = await CommentsModel.countDocuments({ post_id });
+    await PostsModel.findOneAndUpdate(
+      { _id: post_id },
+      { comment_count: count }
+    );
+  }
+};
 
 export const getComment = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
@@ -75,6 +86,8 @@ export const createComment = async (req: Request, res: Response) => {
   req.body.comment_author_ip = req.ip;
 
   const item = await new CommentsModel(req.body).save();
+  await countCommentsPost(item?.post_id);
+
   const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({
     data,
@@ -87,7 +100,7 @@ export const createComment = async (req: Request, res: Response) => {
 export const updateComment = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
   req.body.comment_author_ip = req.ip;
-  
+
   const item = await CommentsModel.findOneAndUpdate({ _id: id }, req.body, {
     new: true,
   });
@@ -102,6 +115,8 @@ export const updateComment = async (req: Request, res: Response) => {
 export const deleteComment = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
   const item = await CommentsModel.findOneAndDelete({ _id: id }).exec();
+  await countCommentsPost(item?.post_id);
+
   const results: ResponseResult = initResponseResult({
     rowsAffected: item ? 1 : 0,
   });
