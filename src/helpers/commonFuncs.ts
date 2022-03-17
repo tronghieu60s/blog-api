@@ -58,15 +58,20 @@ export const isAuthorization = (req: Request) => {
 };
 
 export const isAllowAccess = (req: Request, login_level: number) => {
-  const authLevel = (Authorization as any)?.[login_level];
-  const methods = authLevel?.[url.parse(req.url).pathname.split("/")?.[1]];
-  if (methods?.includes(req.method)) {
+  if (login_level === 1) {
     return true;
   }
+
+  const level = (Authorization as any)?.[login_level];
+  const pathname = url.parse(req.url).pathname.split("/")?.[1];
+  if (level?.[pathname]?.includes(req.method)) {
+    return true;
+  }
+
   return false;
 };
 
-export const basicAuthorization = (
+export const authorizationByToken = (
   req: Request,
   res: Response,
   next: NextFunction
@@ -92,10 +97,27 @@ export const basicAuthorization = (
         return sendResponseError(res, { status: 403, message: "Forbidden" });
       }
       (req as any).login = token.login;
+      (req as any).login_level = token.login_level;
       return next();
     }
     return sendResponseError(res, { status: 404, message: "Not Found" });
   });
+};
+
+export const authorizationRouterUserByLevel = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if ((req as any).login_level === 1) {
+    return next();
+  }
+
+  if (req.params.id === (req as any).login) {
+    return next();
+  }
+
+  return sendResponseError(res, { status: 403, message: "Forbidden" });
 };
 
 /* Response Functions */

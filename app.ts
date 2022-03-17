@@ -4,7 +4,10 @@ import express, { Express, NextFunction, Request, Response } from "express";
 import helmet from "helmet";
 import mongoose from "mongoose";
 import logger from "morgan";
-import { basicAuthorization, sendResponseError } from "./src/helpers/commonFuncs";
+import {
+  authorizationByToken,
+  sendResponseError
+} from "./src/helpers/commonFuncs";
 import { ResponseError } from "./src/helpers/commonTypes";
 import authRouter from "./src/routers/authRouter";
 import commentsRouter from "./src/routers/commentsRouter";
@@ -24,7 +27,7 @@ app.use(helmet());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(basicAuthorization);
+app.use(authorizationByToken);
 
 /* MongoDB */
 const MONGODB_URL_LOCAL = `mongodb://localhost/mongo`;

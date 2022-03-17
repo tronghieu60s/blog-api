@@ -62,7 +62,6 @@ const PostsSchema = new Schema(
 );
 
 PostsSchema.pre("save", async function () {
-  // Set default value
   this.post_name = this.post_name || this._id;
 });
 

@@ -69,9 +69,10 @@ export const createComment = async (req: Request, res: Response) => {
       comment_author: req.body.comment_author || user.display_name,
       comment_author_email: req.body.comment_author_email || user.user_email,
       comment_author_url: req.body.comment_author_url || user.user_url,
+      user_id: (req as any).login,
     };
   }
-  req.body.comment_author_ip = req.body.comment_author_ip || req.ip;
+  req.body.comment_author_ip = req.ip;
 
   const item = await new CommentsModel(req.body).save();
   const data = item ? { items: [item] } : {};
@@ -85,6 +86,8 @@ export const createComment = async (req: Request, res: Response) => {
 
 export const updateComment = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
+  req.body.comment_author_ip = req.ip;
+  
   const item = await CommentsModel.findOneAndUpdate({ _id: id }, req.body, {
     new: true,
   });

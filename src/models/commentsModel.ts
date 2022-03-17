@@ -9,17 +9,17 @@ const CommentsSchema = new Schema(
       ref: "wp_posts",
       required: true,
     },
-    comment_author: { type: String, default: "" },
+    comment_author: { type: String, required: true },
     comment_author_email: {
       type: String,
-      default: "",
+      required: true,
       maxlength: 100,
       match: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       trim: true,
     },
     comment_author_url: {
       type: String,
-      default: "",
+      required: true,
       maxlength: 100,
       match:
         /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/,
@@ -27,10 +27,8 @@ const CommentsSchema = new Schema(
     },
     comment_author_ip: {
       type: String,
-      default: "",
+      required: true,
       maxlength: 100,
-      match:
-        /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
     },
     comment_date: { type: Date, default: Date.now },
     comment_date_gmt: { type: Date, default: Date.now },

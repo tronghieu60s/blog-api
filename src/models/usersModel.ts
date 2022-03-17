@@ -1,6 +1,4 @@
-import bcrypt from "bcrypt";
 import mongoose from "mongoose";
-import { randomIntByLength } from "../helpers/commonFuncs";
 
 const Schema = mongoose.Schema;
 
@@ -42,25 +40,6 @@ const UsersSchema = new Schema(
     timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
   }
 );
-
-UsersSchema.pre("save", async function () {
-  // Encode password
-  this.user_pass = await bcrypt.hash(this.user_pass, 10);
-
-  // Set default value
-  this.user_nicename = this.user_nicename || this.user_login;
-  this.display_name = this.display_name || this.user_login;
-
-  // Generate activation key
-  const generateKey = randomIntByLength(6);
-  this.user_activation_key = await bcrypt.hash(generateKey, 10);
-});
-
-UsersSchema.pre("findOneAndUpdate", async function () {
-  const doc = (this as any)._update;
-  // Encode password
-  doc.user_pass = await bcrypt.hash(doc.user_pass, 10);
-});
 
 const UsersModel = mongoose.model("wp_users", UsersSchema);
 export default UsersModel;

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import {
   initResponseResult,
+  randomIntByLength,
   sendResponseError,
   sendResponseSuccess,
 } from "../helpers/commonFuncs";
@@ -64,6 +65,11 @@ export const getUsers = async (req: Request, res: Response) => {
 };
 
 export const createUser = async (req: Request, res: Response) => {
+  req.body.user_pass = await bcrypt.hash(req.body.user_pass, 10);
+  req.body.user_nicename = req.body.user_nicename || req.body.user_login;
+  req.body.display_name = req.body.display_name || req.body.user_login;
+  req.body.user_activation_key = await bcrypt.hash(randomIntByLength(6), 10);
+
   const item = await new UsersModel(req.body).save();
   const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({
@@ -76,6 +82,8 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const updateUser = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
+  req.body.user_pass = await bcrypt.hash(req.body.user_pass, 10);
+
   const item = await UsersModel.findOneAndUpdate({ _id: id }, req.body, {
     new: true,
   });
