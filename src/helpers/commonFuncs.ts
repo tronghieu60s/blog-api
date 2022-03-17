@@ -1,7 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import Joi from "joi";
 import jwt from "jsonwebtoken";
-import { ResponseCommon, ResponseError, ResponseResult } from "./commonTypes";
+import Authorization from "../common/authorization";
+import {
+  ResponseCommon,
+  ResponseError,
+  ResponseResult,
+  TokenParams,
+} from "./commonTypes";
+const url = require("url");
 
 const { APP_TOKEN_JWT_KEY = "" } = process.env;
 
@@ -36,28 +43,55 @@ export const joiCommonValidateBody = (schema: Joi.ObjectSchema<any>) => {
   };
 };
 
+export const isAuthorization = (req: Request) => {
+  const { url } = req;
+  if (url.indexOf("/users") === 0) {
+    return true;
+  }
+  if (url.indexOf("/posts") === 0) {
+    return true;
+  }
+  if (url.indexOf("/comments") === 0) {
+    return true;
+  }
+  return false;
+};
+
+export const isAllowAccess = (req: Request, login_level: number) => {
+  const authLevel = (Authorization as any)?.[login_level];
+  const methods = authLevel?.[url.parse(req.url).pathname.split("/")?.[1]];
+  if (methods?.includes(req.method)) {
+    return true;
+  }
+  return false;
+};
+
 export const basicAuthorization = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  if (req.url.indexOf("/users") === -1) {
+  if (!isAuthorization(req)) {
     return next();
   }
 
   const token = req.headers?.authorization || "Empty";
-  jwt.verify(token, APP_TOKEN_JWT_KEY, function (err, decoded) {
+  jwt.verify(token, APP_TOKEN_JWT_KEY, (err, decoded) => {
     if (err) {
       return sendResponseError(res, { status: 401, message: "Unauthorized" });
     }
     if (decoded) {
-      if ((decoded as any).login_ip !== req.ip) {
+      const token = decoded as TokenParams;
+      if (token.login_ip !== req.ip) {
         return sendResponseError(res, { status: 403, message: "Forbidden" });
       }
-      if ((decoded as any).expire_in < Date.now()) {
+      if (token.expire_in < Date.now()) {
         return sendResponseError(res, { status: 403, message: "Forbidden" });
       }
-      (req as any).login = (decoded as any).login;
+      if (!isAllowAccess(req, token.login_level)) {
+        return sendResponseError(res, { status: 403, message: "Forbidden" });
+      }
+      (req as any).login = token.login;
       return next();
     }
     return sendResponseError(res, { status: 404, message: "Not Found" });

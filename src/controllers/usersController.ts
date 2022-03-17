@@ -5,7 +5,7 @@ import {
   sendResponseSuccess,
 } from "../helpers/commonFuncs";
 import UsersModel from "../models/usersModel";
-import { ResponseResult } from "../helpers/commonTypes";
+import { ResponseResult, TokenParams } from "../helpers/commonTypes";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -100,10 +100,13 @@ export const noAuthUser = async (req: Request, res: Response) => {
   const login_ip = req.ip;
   const expire = Number(req.body?.expire || APP_TOKEN_EXPIRES_IN);
 
-  const token = jwt.sign(
-    { login: null, login_level: 0, login_ip, expire_in: Date.now() + expire },
-    APP_TOKEN_JWT_KEY
-  );
+  const params: TokenParams = {
+    login: null,
+    login_level: 0,
+    login_ip,
+    expire_in: Date.now() + expire,
+  };
+  const token = jwt.sign(params, APP_TOKEN_JWT_KEY);
   const item = { token };
   const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({
@@ -131,16 +134,13 @@ export const authUser = async (req: Request, res: Response) => {
     return sendResponseError(res, { status: 401, message: "Invalid" });
   }
 
-  const token = jwt.sign(
-    {
-      login: user._id,
-      login_level: 1,
-      login_ip,
-      expire_in: Date.now() + expire,
-    },
-    APP_TOKEN_JWT_KEY
-  );
-
+  const params: TokenParams = {
+    login: user._id,
+    login_level: 1,
+    login_ip,
+    expire_in: Date.now() + expire,
+  };
+  const token = jwt.sign(params, APP_TOKEN_JWT_KEY);
   const item = { user, token };
   const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({
