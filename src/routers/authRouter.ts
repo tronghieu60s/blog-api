@@ -1,7 +1,14 @@
 import PromiseRouter from "express-promise-router";
 import * as usersController from "../controllers/usersController";
-import { joiCommonValidateBody } from "../helpers/commonFuncs";
-import { joiAuthUserSchema, joiRegisterUserSchema } from "../models/usersModel";
+import {
+  joiCommonValidateBody,
+  joiCommonValidateQuery,
+} from "../helpers/commonFuncs";
+import {
+  joiAuthUserSchema,
+  joiRegisterUserSchema,
+  joiVerifyUserSchema,
+} from "../models/usersModel";
 
 const router = PromiseRouter();
 
@@ -13,7 +20,13 @@ router
   .route("/register")
   .post(
     joiCommonValidateBody(joiRegisterUserSchema),
-    usersController.registerUser
+    usersController.createUser
+  );
+router
+  .route("/verify-account")
+  .get(
+    joiCommonValidateQuery(joiVerifyUserSchema),
+    usersController.verifyAccount
   );
 
 export default router;

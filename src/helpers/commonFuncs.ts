@@ -7,7 +7,7 @@ import {
   ResponseError,
   ResponseResult,
   TokenParams,
-} from "./commonTypes";
+} from "../common/types";
 const url = require("url");
 
 const { APP_TOKEN_JWT_KEY = "" } = process.env;

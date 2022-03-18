@@ -8,7 +8,7 @@ import {
   authorizationByToken,
   sendResponseError
 } from "./src/helpers/commonFuncs";
-import { ResponseError } from "./src/helpers/commonTypes";
+import { ResponseError } from "./src/common/types";
 import authRouter from "./src/routers/authRouter";
 import commentsRouter from "./src/routers/commentsRouter";
 import postsRouter from "./src/routers/postsRouter";

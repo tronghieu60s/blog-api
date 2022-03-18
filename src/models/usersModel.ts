@@ -1,7 +1,7 @@
 import Joi from "joi";
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
-import { randomIntByLength } from "../helpers/commonFuncs";
+
+const { APP_LIMIT_DEFAULT_PIN } = process.env;
 
 const Schema = mongoose.Schema;
 
@@ -44,7 +44,6 @@ export const joiCreateUserSchema = Joi.object({
   user_pass: Joi.string().required(),
   user_email: Joi.string().required(),
   user_level: Joi.number(),
-  user_status: Joi.number(),
 });
 
 export const joiUpdateUserSchema = Joi.object({
@@ -64,4 +63,10 @@ export const joiRegisterUserSchema = Joi.object({
   user_login: Joi.string().required(),
   user_pass: Joi.string().required(),
   user_email: Joi.string().required(),
+});
+
+export const joiVerifyUserSchema = Joi.object({
+  id: Joi.string(),
+  key: Joi.string().length(Number(APP_LIMIT_DEFAULT_PIN)),
+  token: Joi.string(),
 });

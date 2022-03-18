@@ -6,15 +6,31 @@ import {
   sendResponseSuccess,
 } from "../helpers/commonFuncs";
 import UsersModel from "../models/usersModel";
-import { ResponseResult, TokenParams } from "../helpers/commonTypes";
+import { ResponseResult, TokenParams } from "../common/types";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { sendEmail } from "../helpers/nodemailer";
 
 const {
   APP_TOKEN_JWT_KEY = "",
-  APP_PAGINATION_LIMIT_DEFAULT,
+  APP_LIMIT_DEFAULT_PIN,
+  APP_LIMIT_DEFAULT_PAGINATION,
   APP_TOKEN_EXPIRES_IN,
 } = process.env;
+
+const sendEmailAccountVerification = async (
+  req: Request,
+  email: string,
+  verify_key: string,
+  activation_key: string
+) => {
+  const fullUrl = req.protocol + "://" + req.get("host");
+  const verifyUrl = fullUrl + `/verify-account?token=${activation_key}`;
+  const content = `Key Verify: ${verify_key}.
+Please click the link below to verify your account:
+${verifyUrl}`;
+  sendEmail(email, "Account Verification", content);
+};
 
 export const getUser = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
@@ -30,7 +46,7 @@ export const getUsers = async (req: Request, res: Response) => {
   const q = String(req.query?.q || "");
   const search = String(req.query?.search || "");
   const page = Number(req.query?.page || 1);
-  const pageSize = Number(req.query?.pageSize || APP_PAGINATION_LIMIT_DEFAULT);
+  const pageSize = Number(req.query?.pageSize || APP_LIMIT_DEFAULT_PAGINATION);
   const order = String(req.query?.order || "desc");
   const orderby = String(req.query?.orderby || "updated_at");
 
@@ -67,9 +83,19 @@ export const getUsers = async (req: Request, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
   req.body.user_pass = await bcrypt.hash(req.body.user_pass, 10);
-  req.body.user_activation_key = await bcrypt.hash(randomIntByLength(6), 10);
+
+  const key = randomIntByLength(Number(APP_LIMIT_DEFAULT_PIN));
+  req.body.user_activation_key = await bcrypt.hash(key, 10);
 
   const item = await new UsersModel(req.body).save();
+  if (item) {
+    sendEmailAccountVerification(
+      req,
+      item.user_email,
+      key,
+      item.user_activation_key
+    );
+  }
   const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({
     data,
@@ -83,13 +109,32 @@ export const updateUser = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
   req.body.user_pass = await bcrypt.hash(req.body.user_pass, 10);
 
-  const item = await UsersModel.findOneAndUpdate({ _id: id }, req.body, {
+  let key = "";
+  let isChangeEmail = false;
+  const item = await UsersModel.findOne({ _id: id }).exec();
+  if (item && item?.user_email !== req.body?.user_email) {
+    isChangeEmail = true;
+    key = randomIntByLength(Number(APP_LIMIT_DEFAULT_PIN));
+    req.body.user_activation_key = await bcrypt.hash(key, 10);
+  }
+
+  const update = await UsersModel.findOneAndUpdate({ _id: id }, req.body, {
     new: true,
   });
-  const data = item ? { items: [item] } : {};
+
+  if (update && isChangeEmail) {
+    sendEmailAccountVerification(
+      req,
+      update.user_email,
+      key,
+      update.user_activation_key
+    );
+  }
+
+  const data = update ? { items: [update] } : {};
   const results: ResponseResult = initResponseResult({
     data,
-    rowsAffected: item ? 1 : 0,
+    rowsAffected: update ? 1 : 0,
   });
   return sendResponseSuccess(res, { results });
 };
@@ -143,7 +188,7 @@ export const authUser = async (req: Request, res: Response) => {
 
   const params: TokenParams = {
     login: user._id,
-    login_level: 1,
+    login_level: user.user_level,
     login_ip,
     expire_in: Date.now() + expire,
   };
@@ -156,13 +201,45 @@ export const authUser = async (req: Request, res: Response) => {
   return sendResponseSuccess(res, { results });
 };
 
-export const registerUser = async (req: Request, res: Response) => {
-  req.body.user_pass = await bcrypt.hash(req.body.user_pass, 10);
+export const verifyAccount = async (req: Request, res: Response) => {
+  const id = String(req.query?.id || "");
+  const key = String(req.query?.key || "");
+  const token = String(req.query?.token || "");
 
-  const item = await new UsersModel(req.body).save();
-  const data = item ? { items: [{ user: item }] } : {};
+  if (id) {
+    const item = await UsersModel.findOne({ _id: id }).exec();
+    if (item) {
+      const compare = bcrypt.compareSync(key, item.user_activation_key);
+      if (compare) {
+        const update = await UsersModel.findOneAndUpdate(
+          { _id: id },
+          { user_activation_key: "" },
+          { new: true }
+        );
+        if (update) {
+          const results: ResponseResult = initResponseResult({
+            rowsAffected: 1,
+          });
+          return sendResponseSuccess(res, { results });
+        }
+      }
+    }
+  } else if (token) {
+    const item = await UsersModel.findOneAndUpdate(
+      { user_activation_key: token },
+      { user_activation_key: "" },
+      { new: true }
+    );
+    if (item) {
+      const results: ResponseResult = initResponseResult({
+        rowsAffected: 1,
+      });
+      return sendResponseSuccess(res, { results });
+    }
+  }
+
   const results: ResponseResult = initResponseResult({
-    data,
+    rowsAffected: 0,
   });
   return sendResponseSuccess(res, { results });
 };

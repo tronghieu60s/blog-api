@@ -4,9 +4,9 @@ import {
   sendResponseSuccess,
 } from "../helpers/commonFuncs";
 import PostsModel from "../models/postsModel";
-import { ResponseResult } from "../helpers/commonTypes";
+import { ResponseResult } from "../common/types";
 
-const { APP_PAGINATION_LIMIT_DEFAULT } = process.env;
+const { APP_LIMIT_DEFAULT_PAGINATION } = process.env;
 
 export const getPost = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
@@ -25,7 +25,7 @@ export const getPosts = async (req: Request, res: Response) => {
   const q = String(req.query?.q || "");
   const search = String(req.query?.search || "");
   const page = Number(req.query?.page || 1);
-  const pageSize = Number(req.query?.pageSize || APP_PAGINATION_LIMIT_DEFAULT);
+  const pageSize = Number(req.query?.pageSize || APP_LIMIT_DEFAULT_PAGINATION);
   const order = String(req.query?.order || "desc");
   const orderby = String(req.query?.orderby || "updated_at");
 
