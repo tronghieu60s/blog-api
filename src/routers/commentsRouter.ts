@@ -2,19 +2,19 @@ import PromiseRouter from "express-promise-router";
 import * as commentsController from "../controllers/commentsController";
 import {
   joiCommonValidateBody,
-  joiCommonValidateQuery
+  joiCommonValidateQuery,
 } from "../helpers/commonFuncs";
+import { joiFilterSchema } from "../helpers/commonValidate";
 import {
-  joiFilterSchema,
   joiCreateCommentsSchema,
   joiUpdateCommentsSchema,
-} from "../helpers/commonValidate";
+} from "../models/commentsModel";
 
 const router = PromiseRouter();
 
 router
   .route("/")
-  .get([joiCommonValidateQuery(joiFilterSchema)], commentsController.getComments)
+  .get(joiCommonValidateQuery(joiFilterSchema), commentsController.getComments)
   .post(
     joiCommonValidateBody(joiCreateCommentsSchema),
     commentsController.createComment

@@ -24,8 +24,8 @@ export const getComment = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
   const item = await CommentsModel.findById(id)
     .populate("post_id")
-    .populate("comment_parent")
     .populate("user_id")
+    .populate("comment_parent")
     .exec();
   const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({
@@ -51,14 +51,15 @@ export const getComments = async (req: Request, res: Response) => {
     {},
     { skip, limit: pageSize, sort }
   ).exec();
-  const count = await CommentsModel.countDocuments(query);
+  const total = await CommentsModel.countDocuments(query);
 
-  const pageTotal = Math.ceil(count / pageSize);
+  const pageTotal = Math.ceil(total / pageSize);
   const nextPage = page >= pageTotal ? null : page + 1;
   const previousPage = page <= 1 ? null : page - 1;
 
   const data = {
     items,
+    total,
     pageTotal,
     page,
     pageSize,
@@ -77,10 +78,9 @@ export const createComment = async (req: Request, res: Response) => {
     const user = await UsersModel.findById((req as any).login);
     req.body = {
       ...req.body,
+      user_id: (req as any).login,
       comment_author: req.body.comment_author || user.display_name,
       comment_author_email: req.body.comment_author_email || user.user_email,
-      comment_author_url: req.body.comment_author_url || user.user_url,
-      user_id: (req as any).login,
     };
   }
   req.body.comment_author_ip = req.ip;

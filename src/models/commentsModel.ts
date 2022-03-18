@@ -1,3 +1,4 @@
+import Joi from "joi";
 import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
@@ -9,6 +10,16 @@ const CommentsSchema = new Schema(
       ref: "wp_posts",
       required: true,
     },
+    user_id: {
+      type: Schema.Types.ObjectId,
+      ref: "wp_users",
+      default: null,
+    },
+    comment_parent: {
+      type: Schema.Types.ObjectId,
+      ref: "wp_comments",
+      default: null,
+    },
     comment_author: { type: String, required: true },
     comment_author_email: {
       type: String,
@@ -17,39 +28,17 @@ const CommentsSchema = new Schema(
       match: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       trim: true,
     },
-    comment_author_url: {
-      type: String,
-      default: "",
-      maxlength: 100,
-      match:
-        /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/,
-      trim: true,
-    },
     comment_author_ip: {
       type: String,
       required: true,
       maxlength: 100,
     },
-    comment_date: { type: Date, default: Date.now },
-    comment_date_gmt: { type: Date, default: Date.now },
     comment_content: { type: String, required: true },
-    comment_karma: { type: Number, default: 0 },
     comment_approved: { type: Number, default: 1 },
-    comment_agent: { type: String, default: "" },
     comment_type: {
       type: String,
       default: "comment",
       maxlength: 20,
-    },
-    comment_parent: {
-      type: Schema.Types.ObjectId,
-      ref: "wp_comments",
-      default: null,
-    },
-    user_id: {
-      type: Schema.Types.ObjectId,
-      ref: "wp_users",
-      default: null,
     },
   },
   {
@@ -60,3 +49,33 @@ const CommentsSchema = new Schema(
 
 const CommentsModel = mongoose.model("wp_comments", CommentsSchema);
 export default CommentsModel;
+
+/* Comments Validate */
+
+export const joiCreateCommentsSchema = Joi.object({
+  post_id: Joi.string().required(),
+  comment_author: Joi.string(),
+  comment_author_email: Joi.string(),
+  comment_author_url: Joi.string(),
+  comment_date: Joi.date(),
+  comment_date_gmt: Joi.date(),
+  comment_content: Joi.string().required(),
+  comment_karma: Joi.number(),
+  comment_approved: Joi.number(),
+  comment_agent: Joi.string(),
+  comment_type: Joi.string(),
+  comment_parent: Joi.string(),
+});
+
+export const joiUpdateCommentsSchema = Joi.object({
+  comment_author: Joi.string(),
+  comment_author_email: Joi.string(),
+  comment_author_url: Joi.string(),
+  comment_date: Joi.date(),
+  comment_date_gmt: Joi.date(),
+  comment_content: Joi.string(),
+  comment_karma: Joi.number(),
+  comment_approved: Joi.number(),
+  comment_agent: Joi.string(),
+  comment_type: Joi.string(),
+});

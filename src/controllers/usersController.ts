@@ -43,14 +43,15 @@ export const getUsers = async (req: Request, res: Response) => {
     {},
     { skip, limit: pageSize, sort }
   ).exec();
-  const count = await UsersModel.countDocuments(query);
+  const total = await UsersModel.countDocuments(query);
 
-  const pageTotal = Math.ceil(count / pageSize);
+  const pageTotal = Math.ceil(total / pageSize);
   const nextPage = page >= pageTotal ? null : page + 1;
   const previousPage = page <= 1 ? null : page - 1;
 
   const data = {
     items,
+    total,
     pageTotal,
     page,
     pageSize,
@@ -66,8 +67,6 @@ export const getUsers = async (req: Request, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
   req.body.user_pass = await bcrypt.hash(req.body.user_pass, 10);
-  req.body.user_nicename = req.body.user_nicename || req.body.user_login;
-  req.body.display_name = req.body.display_name || req.body.user_login;
   req.body.user_activation_key = await bcrypt.hash(randomIntByLength(6), 10);
 
   const item = await new UsersModel(req.body).save();
@@ -158,6 +157,8 @@ export const authUser = async (req: Request, res: Response) => {
 };
 
 export const registerUser = async (req: Request, res: Response) => {
+  req.body.user_pass = await bcrypt.hash(req.body.user_pass, 10);
+
   const item = await new UsersModel(req.body).save();
   const data = item ? { items: [{ user: item }] } : {};
   const results: ResponseResult = initResponseResult({

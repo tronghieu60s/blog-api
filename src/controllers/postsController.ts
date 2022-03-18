@@ -11,7 +11,7 @@ const { APP_PAGINATION_LIMIT_DEFAULT } = process.env;
 export const getPost = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
   const item = await PostsModel.findById(id)
-    .populate("post_author")
+    .populate("user_id")
     .populate("post_parent")
     .exec();
   const data = item ? { items: [item] } : {};
@@ -38,14 +38,15 @@ export const getPosts = async (req: Request, res: Response) => {
     {},
     { skip, limit: pageSize, sort }
   ).exec();
-  const count = await PostsModel.countDocuments(query);
+  const total = await PostsModel.countDocuments(query);
 
-  const pageTotal = Math.ceil(count / pageSize);
+  const pageTotal = Math.ceil(total / pageSize);
   const nextPage = page >= pageTotal ? null : page + 1;
   const previousPage = page <= 1 ? null : page - 1;
 
   const data = {
     items,
+    total,
     pageTotal,
     page,
     pageSize,
@@ -62,7 +63,7 @@ export const getPosts = async (req: Request, res: Response) => {
 export const createPost = async (req: Request, res: Response) => {
   const item = await new PostsModel({
     ...req.body,
-    post_author: (req as any).login,
+    user_id: (req as any).login,
   }).save();
   const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({

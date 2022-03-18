@@ -2,13 +2,13 @@ import PromiseRouter from "express-promise-router";
 import * as postsController from "../controllers/postsController";
 import {
   joiCommonValidateBody,
-  joiCommonValidateQuery
+  joiCommonValidateQuery,
 } from "../helpers/commonFuncs";
+import { joiFilterSchema } from "../helpers/commonValidate";
 import {
-  joiFilterSchema,
   joiCreatePostsSchema,
   joiUpdatePostsSchema,
-} from "../helpers/commonValidate";
+} from "../models/postsModel";
 
 const router = PromiseRouter();
 
