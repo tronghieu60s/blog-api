@@ -22,18 +22,10 @@ const UsersSchema = new Schema(
       match: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       trim: true,
     },
-    user_url: {
-      type: String,
-      default: "",
-      maxlength: 100,
-      match:
-        /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/,
-      trim: true,
-    },
-    user_registered: { type: Date, required: true, default: Date.now },
+    user_level: { type: Number, default: 0 },
+    user_registered: { type: Date, default: Date.now },
     user_activation_key: { type: String, default: "" },
     user_status: { type: Number, default: 0 },
-    display_name: { type: String, default: "" },
   },
   {
     collection: "wp_users",
