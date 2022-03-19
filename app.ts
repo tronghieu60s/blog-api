@@ -48,11 +48,10 @@ app.use(
 );
 
 /* Routers */
-app.get("/500", () => {
+app.use("/api", authorizationByToken, router);
+app.get("/api/500", () => {
   throw {};
 });
-
-app.use("/api", authorizationByToken, router);
 
 app.use((req: Request, res: Response, next) => {
   const status = 404;

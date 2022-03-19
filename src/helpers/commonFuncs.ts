@@ -8,6 +8,7 @@ import {
   ResponseResult,
   TokenParams,
 } from "../common/types";
+import UsersModel from "../models/usersModel";
 const url = require("url");
 
 const { APP_TOKEN_JWT_KEY = "" } = process.env;
@@ -43,6 +44,20 @@ export const joiCommonValidateBody = (schema: Joi.ObjectSchema<any>) => {
   };
 };
 
+export const isAuthorization = (req: Request) => {
+  const { url } = req;
+  if (url.indexOf("/users") === 0) {
+    return true;
+  }
+  if (url.indexOf("/posts") === 0) {
+    return true;
+  }
+  if (url.indexOf("/comments") === 0) {
+    return true;
+  }
+  return false;
+};
+
 export const isAllowAccess = (req: Request, login_level: number) => {
   if (login_level === 1) {
     return true;
@@ -62,8 +77,12 @@ export const authorizationByToken = (
   res: Response,
   next: NextFunction
 ) => {
+  if (!isAuthorization(req)) {
+    return next();
+  }
+
   const token = req.headers?.authorization || "Empty";
-  jwt.verify(token, APP_TOKEN_JWT_KEY, (err, decoded) => {
+  jwt.verify(token, APP_TOKEN_JWT_KEY, async (err, decoded) => {
     if (err) {
       return sendResponseError(res, { status: 401, message: "Unauthorized" });
     }
@@ -73,10 +92,16 @@ export const authorizationByToken = (
         return sendResponseError(res, { status: 403, message: "Forbidden" });
       }
       if (token.expire_in < Date.now()) {
-        return sendResponseError(res, { status: 403, message: "Forbidden" });
+        return sendResponseError(res, {
+          status: 403,
+          message: "Token Expired",
+        });
       }
       if (!isAllowAccess(req, token.login_level)) {
-        return sendResponseError(res, { status: 403, message: "Forbidden" });
+        return sendResponseError(res, { status: 403, message: "User Invalid" });
+      }
+      if (token.login_level !== 0 && !(await UsersModel.findById(token.login).exec())) {
+        return sendResponseError(res, { status: 403, message: "User Invalid" });
       }
       (req as any).login = token.login;
       (req as any).login_level = token.login_level;

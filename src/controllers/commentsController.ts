@@ -76,13 +76,28 @@ export const getComments = async (req: Request, res: Response) => {
 export const createComment = async (req: Request, res: Response) => {
   if ((req as any).login) {
     const user = await UsersModel.findById((req as any).login);
-    req.body = {
-      ...req.body,
-      user_id: (req as any).login,
-      comment_author: req.body.comment_author || user.display_name,
-      comment_author_email: req.body.comment_author_email || user.user_email,
-    };
+    if (user) {
+      req.body = {
+        ...req.body,
+        user_id: (req as any).login,
+        comment_author: req.body.comment_author || user.user_login,
+        comment_author_email: req.body.comment_author_email || user.user_email,
+      };
+    }
+  } else if (req.body.comment_author_email) {
+    const user = await UsersModel.findOne({
+      user_email: req.body.comment_author_email,
+    }).exec();
+    if (user) {
+      req.body = {
+        ...req.body,
+        user_id: user._id,
+        comment_author: req.body.comment_author || user.user_login,
+        comment_author_email: req.body.comment_author_email || user.user_email,
+      };
+    }
   }
+
   req.body.comment_author_ip = req.ip;
 
   const item = await new CommentsModel(req.body).save();

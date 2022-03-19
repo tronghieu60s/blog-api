@@ -13,6 +13,7 @@ import { sendEmail } from "../helpers/nodemailer";
 
 const {
   APP_TOKEN_JWT_KEY = "",
+  APP_LIMIT_BCRYPT_ROUNDS,
   APP_LIMIT_DEFAULT_PIN,
   APP_LIMIT_DEFAULT_PAGINATION,
   APP_TOKEN_EXPIRES_IN,
@@ -88,10 +89,16 @@ export const getUsers = async (req: Request, res: Response) => {
 };
 
 export const createUser = async (req: Request, res: Response) => {
-  req.body.user_pass = await bcrypt.hash(req.body.user_pass, 10);
+  req.body.user_pass = await bcrypt.hash(
+    req.body.user_pass,
+    Number(APP_LIMIT_BCRYPT_ROUNDS)
+  );
 
   const key = randomIntByLength(Number(APP_LIMIT_DEFAULT_PIN));
-  req.body.user_activation_key = await bcrypt.hash(key, 10);
+  req.body.user_activation_key = await bcrypt.hash(
+    key,
+    Number(APP_LIMIT_BCRYPT_ROUNDS)
+  );
 
   const item = await new UsersModel(req.body).save();
   if (item) {
@@ -112,7 +119,10 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const updateUser = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
-  req.body.user_pass = await bcrypt.hash(req.body.user_pass, 10);
+  req.body.user_pass = await bcrypt.hash(
+    req.body.user_pass,
+    Number(APP_LIMIT_BCRYPT_ROUNDS)
+  );
 
   let key = "";
   let isChangeEmail = false;
@@ -120,7 +130,10 @@ export const updateUser = async (req: Request, res: Response) => {
   if (item && item?.user_email !== req.body?.user_email) {
     isChangeEmail = true;
     key = randomIntByLength(Number(APP_LIMIT_DEFAULT_PIN));
-    req.body.user_activation_key = await bcrypt.hash(key, 10);
+    req.body.user_activation_key = await bcrypt.hash(
+      key,
+      Number(APP_LIMIT_BCRYPT_ROUNDS)
+    );
   }
 
   const update = await UsersModel.findOneAndUpdate({ _id: id }, req.body, {
@@ -224,6 +237,8 @@ export const verifyUser = async (req: Request, res: Response) => {
         if (update) {
           isUpdate = true;
         }
+      } else {
+        return sendResponseError(res, { status: 401, message: "Key Invalid" });
       }
     }
   } else if (token) {
@@ -232,9 +247,10 @@ export const verifyUser = async (req: Request, res: Response) => {
       { user_activation_key: "" },
       { new: true }
     );
-    if (item) {
-      isUpdate = true;
+    if (!item) {
+      return sendResponseError(res, { status: 401, message: "Token Invalid" });
     }
+    isUpdate = true;
   }
 
   const results: ResponseResult = initResponseResult({
@@ -246,7 +262,10 @@ export const verifyUser = async (req: Request, res: Response) => {
 export const verifyUserResend = async (req: Request, res: Response) => {
   const id = String(req.body?.id || "");
   const key = randomIntByLength(Number(APP_LIMIT_DEFAULT_PIN));
-  req.body.user_activation_key = await bcrypt.hash(key, 10);
+  req.body.user_activation_key = await bcrypt.hash(
+    key,
+    Number(APP_LIMIT_BCRYPT_ROUNDS)
+  );
 
   const update = await UsersModel.findOneAndUpdate(
     { _id: id, user_activation_key: { $ne: "" } },
@@ -273,7 +292,10 @@ export const verifyUserResend = async (req: Request, res: Response) => {
 export const resetPassword = async (req: Request, res: Response) => {
   const login = String(req.body?.login || "");
   const user_pass = randomIntByLength(Number(APP_LIMIT_DEFAULT_PIN));
-  req.body.user_pass = await bcrypt.hash(user_pass, 10);
+  req.body.user_pass = await bcrypt.hash(
+    user_pass,
+    Number(APP_LIMIT_BCRYPT_ROUNDS)
+  );
 
   const update = await UsersModel.findOneAndUpdate(
     { $or: [{ user_login: login }, { user_email: login }] },

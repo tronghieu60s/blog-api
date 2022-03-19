@@ -24,7 +24,7 @@ const UsersSchema = new Schema(
       match: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       trim: true,
     },
-    user_level: { type: Number, default: 0 },
+    user_level: { type: Number, default: 2 },
     user_activation_key: { type: String, default: "" },
     user_status: { type: Number, default: 0 },
   },
@@ -44,6 +44,7 @@ export const joiCreateUserSchema = Joi.object({
   user_pass: Joi.string().required(),
   user_email: Joi.string().required(),
   user_level: Joi.number(),
+  user_status: Joi.number(),
 });
 
 export const joiUpdateUserSchema = Joi.object({

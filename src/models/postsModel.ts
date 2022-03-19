@@ -56,14 +56,14 @@ export default PostsModel;
 /* Posts Validate */
 
 export const joiCreatePostsSchema = Joi.object({
+  post_parent: Joi.string(),
   post_content: Joi.string().required(),
   post_title: Joi.string().required(),
   post_excerpt: Joi.string(),
   post_status: Joi.string(),
   post_comment_status: Joi.string(),
-  post_password: Joi.string(),
+  post_password: Joi.string().allow(""),
   post_slug: Joi.string(),
-  post_parent: Joi.string(),
   post_type: Joi.string(),
 });
 
@@ -73,8 +73,7 @@ export const joiUpdatePostsSchema = Joi.object({
   post_excerpt: Joi.string(),
   post_status: Joi.string(),
   post_comment_status: Joi.string(),
-  post_password: Joi.string(),
+  post_password: Joi.string().allow(""),
   post_slug: Joi.string(),
-  post_parent: Joi.string(),
   post_type: Joi.string(),
 });

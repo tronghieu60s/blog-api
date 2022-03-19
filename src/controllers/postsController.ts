@@ -1,12 +1,13 @@
+import bcrypt from "bcrypt";
 import { Request, Response } from "express";
+import { ResponseResult } from "../common/types";
 import {
   initResponseResult,
   sendResponseSuccess,
 } from "../helpers/commonFuncs";
 import PostsModel from "../models/postsModel";
-import { ResponseResult } from "../common/types";
 
-const { APP_LIMIT_DEFAULT_PAGINATION } = process.env;
+const { APP_LIMIT_BCRYPT_ROUNDS, APP_LIMIT_DEFAULT_PAGINATION } = process.env;
 
 export const getPost = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
@@ -61,6 +62,13 @@ export const getPosts = async (req: Request, res: Response) => {
 };
 
 export const createPost = async (req: Request, res: Response) => {
+  if (req.body.post_password) {
+    req.body.post_password = await bcrypt.hash(
+      req.body.post_password,
+      Number(APP_LIMIT_BCRYPT_ROUNDS)
+    );
+  }
+
   const item = await new PostsModel({
     ...req.body,
     user_id: (req as any).login,
@@ -75,6 +83,13 @@ export const createPost = async (req: Request, res: Response) => {
 };
 
 export const updatePost = async (req: Request, res: Response) => {
+  if (req.body.post_password) {
+    req.body.post_password = await bcrypt.hash(
+      req.body.post_password,
+      Number(APP_LIMIT_BCRYPT_ROUNDS)
+    );
+  }
+  
   const id = String(req.params?.id || "");
   const item = await PostsModel.findOneAndUpdate({ _id: id }, req.body, {
     new: true,
