@@ -102,6 +102,15 @@ export const updatePost = async (req: Request, res: Response) => {
   return sendResponseSuccess(res, { results });
 };
 
+export const deletePosts = async (req: Request, res: Response) => {
+  const ids = req.body?.ids || [];
+  const items = await PostsModel.deleteMany({ _id: { $in: ids } }).exec();
+  const results: ResponseResult = initResponseResult({
+    rowsAffected: items ? items.deletedCount : 0,
+  });
+  return sendResponseSuccess(res, { results });
+};
+
 export const deletePost = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
   const item = await PostsModel.findOneAndDelete({ _id: id }).exec();

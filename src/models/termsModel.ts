@@ -5,6 +5,11 @@ const Schema = mongoose.Schema;
 
 const TermsSchema = new Schema(
   {
+    posts: {
+      type: [Schema.Types.ObjectId],
+      ref: "wp_posts",
+      default: [],
+    },
     term_parent: {
       type: Schema.Types.ObjectId,
       ref: "wp_terms",

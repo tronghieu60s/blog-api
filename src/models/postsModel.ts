@@ -10,6 +10,11 @@ const PostsSchema = new Schema(
       ref: "wp_users",
       required: true,
     },
+    terms: {
+      type: [Schema.Types.ObjectId],
+      ref: "wp_terms",
+      default: [],
+    },
     post_parent: {
       type: Schema.Types.ObjectId,
       ref: "wp_posts",

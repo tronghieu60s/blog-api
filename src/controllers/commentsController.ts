@@ -127,6 +127,15 @@ export const updateComment = async (req: Request, res: Response) => {
   return sendResponseSuccess(res, { results });
 };
 
+export const deleteComments = async (req: Request, res: Response) => {
+  const ids = req.body?.ids || [];
+  const items = await CommentsModel.deleteMany({ _id: { $in: ids } }).exec();
+  const results: ResponseResult = initResponseResult({
+    rowsAffected: items ? items.deletedCount : 0,
+  });
+  return sendResponseSuccess(res, { results });
+};
+
 export const deleteComment = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
   const item = await CommentsModel.findOneAndDelete({ _id: id }).exec();

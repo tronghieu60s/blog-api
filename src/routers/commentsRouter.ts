@@ -4,7 +4,7 @@ import {
   joiCommonValidateBody,
   joiCommonValidateQuery,
 } from "../helpers/commonFuncs";
-import { joiFilterSchema } from "../common/validate";
+import { joiDeleteManySchema, joiFilterSchema } from "../common/validate";
 import {
   joiCreateCommentsSchema,
   joiUpdateCommentsSchema,
@@ -18,6 +18,10 @@ router
   .post(
     joiCommonValidateBody(joiCreateCommentsSchema),
     commentsController.createComment
+  )
+  .delete(
+    joiCommonValidateBody(joiDeleteManySchema),
+    commentsController.deleteComments
   );
 router
   .route("/:id")

@@ -156,6 +156,15 @@ export const updateUser = async (req: Request, res: Response) => {
   return sendResponseSuccess(res, { results });
 };
 
+export const deleteUsers = async (req: Request, res: Response) => {
+  const ids = req.body?.ids || [];
+  const items = await UsersModel.deleteMany({ _id: { $in: ids } }).exec();
+  const results: ResponseResult = initResponseResult({
+    rowsAffected: items ? items.deletedCount : 0,
+  });
+  return sendResponseSuccess(res, { results });
+};
+
 export const deleteUser = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
   const item = await UsersModel.findOneAndDelete({ _id: id }).exec();
@@ -220,7 +229,7 @@ export const verifyUser = async (req: Request, res: Response) => {
   const id = String(req.body?.id || "");
   const key = String(req.body?.key || "");
   const token = String(req.body?.token || "");
-    console.log(token);
+  console.log(token);
   let isUpdate = false;
   if (id) {
     const item = await UsersModel.findOne({ _id: id }).exec();

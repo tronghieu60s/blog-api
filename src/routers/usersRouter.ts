@@ -4,7 +4,7 @@ import {
   joiCommonValidateBody,
   joiCommonValidateQuery,
 } from "../helpers/commonFuncs";
-import { joiFilterSchema } from "../common/validate";
+import { joiDeleteManySchema, joiFilterSchema } from "../common/validate";
 import { joiCreateUserSchema, joiUpdateUserSchema } from "../models/usersModel";
 
 const router = PromiseRouter();
@@ -12,7 +12,11 @@ const router = PromiseRouter();
 router
   .route("/")
   .get(joiCommonValidateQuery(joiFilterSchema), usersController.getUsers)
-  .post(joiCommonValidateBody(joiCreateUserSchema), usersController.createUser);
+  .post(joiCommonValidateBody(joiCreateUserSchema), usersController.createUser)
+  .delete(
+    joiCommonValidateBody(joiDeleteManySchema),
+    usersController.deleteUsers
+  );
 router
   .route("/:id")
   .get(usersController.getUser)
