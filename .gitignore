@@ -47,3 +47,7 @@ dist
 
 # Webstorm settings
 .idea
+
+# Uploads
+public/uploads/**/*
+!public/uploads/temp

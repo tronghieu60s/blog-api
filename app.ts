@@ -7,16 +7,12 @@ import logger from "morgan";
 import { ResponseError } from "./src/common/types";
 import {
   authorizationByToken,
-  sendResponseError
+  sendResponseError,
 } from "./src/helpers/commonFuncs";
 import router from "./src/routers";
 
 const app: Express = express();
-const {
-  PORT = 3000,
-  NODE_ENV,
-  MONGODB_URI,
-} = process.env;
+const { PORT = 3000, NODE_ENV, MONGODB_URI } = process.env;
 
 /* Middleware */
 app.use(cors());
@@ -24,6 +20,7 @@ app.use(helmet());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(express.static(__dirname + "/public"));
 
 /* MongoDB */
 const MONGODB_URL_LOCAL = `mongodb://localhost/mongo`;
