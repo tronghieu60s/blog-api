@@ -4,7 +4,16 @@ const Schema = mongoose.Schema;
 
 const TermsSchema = new Schema(
   {
-    term_parent: { type: Schema.Types.ObjectId, ref: "wp_terms" },
+    posts: {
+      type: [Schema.Types.ObjectId],
+      ref: "wp_posts",
+      default: [],
+    },
+    term_parent: {
+      type: Schema.Types.ObjectId,
+      ref: "wp_terms",
+      default: null,
+    },
     term_name: { type: String, required: true },
     term_slug: { type: String, required: true, unique: true },
     term_taxonomy: {

@@ -7,6 +7,11 @@ const Schema = mongoose.Schema;
 
 const UsersSchema = new Schema(
   {
+    posts: {
+      type: [Schema.Types.ObjectId],
+      ref: "wp_posts",
+      default: [],
+    },
     user_login: {
       type: String,
       required: true,

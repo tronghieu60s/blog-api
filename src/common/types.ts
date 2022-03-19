@@ -24,6 +24,5 @@ export type ResponseError = ResponseCommon & { errors?: Error | ResponseError };
 export type TokenParams = {
   login: string | null;
   login_ip: string;
-  login_level: number;
   expire_in: number;
 };

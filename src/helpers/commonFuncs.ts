@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import Joi from "joi";
 import jwt from "jsonwebtoken";
-import Authorization from "../common/authorization";
+import authorization from "../common/authorization";
 import {
   ResponseCommon,
   ResponseError,
@@ -58,20 +58,6 @@ export const isAuthorization = (req: Request) => {
   return false;
 };
 
-export const isAllowAccess = (req: Request, login_level: number) => {
-  if (login_level === 1) {
-    return true;
-  }
-
-  const level = (Authorization as any)?.[login_level];
-  const pathname = url.parse(req.url).pathname.split("/")?.[1];
-  if (level?.[pathname]?.includes(req.method)) {
-    return true;
-  }
-
-  return false;
-};
-
 export const authorizationByToken = (
   req: Request,
   res: Response,
@@ -97,14 +83,27 @@ export const authorizationByToken = (
           message: "Token Expired",
         });
       }
-      if (!isAllowAccess(req, token.login_level)) {
-        return sendResponseError(res, { status: 403, message: "User Invalid" });
+
+      if (token.login) {
+        const user = await UsersModel.findById(token.login).exec();
+        if (user) {
+          const level = (authorization as any)?.[user.user_level];
+          const pathname = url.parse(req.url).pathname.split("/")?.[1];
+          if (user.user_level !== 1 && !level?.[pathname]?.includes(req.method)) {
+             return sendResponseError(res, {
+               status: 403,
+               message: "Forbidden",
+             });
+          }
+        } else {
+          return sendResponseError(res, {
+            status: 403,
+            message: "User Invalid",
+          });
+        }
+        (req as any).login = token.login;
       }
-      if (token.login_level !== 0 && !(await UsersModel.findById(token.login).exec())) {
-        return sendResponseError(res, { status: 403, message: "User Invalid" });
-      }
-      (req as any).login = token.login;
-      (req as any).login_level = token.login_level;
+
       return next();
     }
     return sendResponseError(res, { status: 404, message: "Not Found" });

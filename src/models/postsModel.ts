@@ -5,6 +5,16 @@ const Schema = mongoose.Schema;
 
 const PostsSchema = new Schema(
   {
+    terms: {
+      type: [Schema.Types.ObjectId],
+      ref: "wp_terms",
+      default: [],
+    },
+    comments: {
+      type: [Schema.Types.ObjectId],
+      ref: "wp_comments",
+      default: [],
+    },
     user_id: {
       type: Schema.Types.ObjectId,
       ref: "wp_users",

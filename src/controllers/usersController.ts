@@ -171,7 +171,6 @@ export const noAuthUser = async (req: Request, res: Response) => {
 
   const params: TokenParams = {
     login: null,
-    login_level: 0,
     login_ip,
     expire_in: Date.now() + expire,
   };
@@ -205,7 +204,6 @@ export const authUser = async (req: Request, res: Response) => {
 
   const params: TokenParams = {
     login: user._id,
-    login_level: user.user_level,
     login_ip,
     expire_in: Date.now() + expire,
   };
@@ -222,7 +220,7 @@ export const verifyUser = async (req: Request, res: Response) => {
   const id = String(req.body?.id || "");
   const key = String(req.body?.key || "");
   const token = String(req.body?.token || "");
-
+    console.log(token);
   let isUpdate = false;
   if (id) {
     const item = await UsersModel.findOne({ _id: id }).exec();
@@ -247,10 +245,11 @@ export const verifyUser = async (req: Request, res: Response) => {
       { user_activation_key: "" },
       { new: true }
     );
-    if (!item) {
+    if (item) {
+      isUpdate = true;
+    } else {
       return sendResponseError(res, { status: 401, message: "Token Invalid" });
     }
-    isUpdate = true;
   }
 
   const results: ResponseResult = initResponseResult({
