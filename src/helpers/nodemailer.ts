@@ -13,11 +13,13 @@ export const sendEmail = (email: string, subject: string, text: string) => {
   const from = APP_NODEMAILER_EMAIL;
   const mailOptions = { from, to: email, subject, text };
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("Email Sent: " + info.response);
-    }
+  return new Promise((resolve, reject) => {
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(info.response);
+      }
+    });
   });
 };

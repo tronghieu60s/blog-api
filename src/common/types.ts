@@ -27,19 +27,3 @@ export type TokenParams = {
   login_level: number;
   expire_in: number;
 };
-
-export type CreateCommentParams = {
-  post_id: string;
-  comment_author: string;
-  comment_author_email: string;
-  comment_author_url: string;
-  comment_author_ip: string;
-  comment_date: Date;
-  comment_date_gmt: Date;
-  comment_content: string;
-  comment_karma: number;
-  comment_approved: number;
-  comment_agent: string;
-  comment_type: string;
-  comment_parent: string;
-};

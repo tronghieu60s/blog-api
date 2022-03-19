@@ -19,17 +19,23 @@ const {
 } = process.env;
 
 const sendEmailAccountVerification = async (
-  req: Request,
   email: string,
   verify_key: string,
   activation_key: string
 ) => {
-  const fullUrl = req.protocol + "://" + req.get("host");
-  const verifyUrl = fullUrl + `/verify-account?token=${activation_key}`;
   const content = `Key Verify: ${verify_key}.
-Please click the link below to verify your account:
-${verifyUrl}`;
-  sendEmail(email, "Account Verification", content);
+Token Verify: ${activation_key}.`;
+  return sendEmail(email, "Account Verification", content);
+};
+
+const sendEmailPasswordReset = async (email: string, token: string) => {
+  let content = "";
+  if (token.length === Number(APP_LIMIT_DEFAULT_PIN)) {
+    content = `Password: ${token}.`;
+  } else {
+    content = `Token Reset: ${token}.`;
+  }
+  return sendEmail(email, "Password Reset", content);
 };
 
 export const getUser = async (req: Request, res: Response) => {
@@ -90,7 +96,6 @@ export const createUser = async (req: Request, res: Response) => {
   const item = await new UsersModel(req.body).save();
   if (item) {
     sendEmailAccountVerification(
-      req,
       item.user_email,
       key,
       item.user_activation_key
@@ -124,7 +129,6 @@ export const updateUser = async (req: Request, res: Response) => {
 
   if (update && isChangeEmail) {
     sendEmailAccountVerification(
-      req,
       update.user_email,
       key,
       update.user_activation_key
@@ -201,11 +205,12 @@ export const authUser = async (req: Request, res: Response) => {
   return sendResponseSuccess(res, { results });
 };
 
-export const verifyAccount = async (req: Request, res: Response) => {
-  const id = String(req.query?.id || "");
-  const key = String(req.query?.key || "");
-  const token = String(req.query?.token || "");
+export const verifyUser = async (req: Request, res: Response) => {
+  const id = String(req.body?.id || "");
+  const key = String(req.body?.key || "");
+  const token = String(req.body?.token || "");
 
+  let isUpdate = false;
   if (id) {
     const item = await UsersModel.findOne({ _id: id }).exec();
     if (item) {
@@ -217,10 +222,7 @@ export const verifyAccount = async (req: Request, res: Response) => {
           { new: true }
         );
         if (update) {
-          const results: ResponseResult = initResponseResult({
-            rowsAffected: 1,
-          });
-          return sendResponseSuccess(res, { results });
+          isUpdate = true;
         }
       }
     }
@@ -231,15 +233,62 @@ export const verifyAccount = async (req: Request, res: Response) => {
       { new: true }
     );
     if (item) {
-      const results: ResponseResult = initResponseResult({
-        rowsAffected: 1,
-      });
-      return sendResponseSuccess(res, { results });
+      isUpdate = true;
     }
   }
 
   const results: ResponseResult = initResponseResult({
-    rowsAffected: 0,
+    rowsAffected: isUpdate ? 1 : 0,
+  });
+  return sendResponseSuccess(res, { results });
+};
+
+export const verifyUserResend = async (req: Request, res: Response) => {
+  const id = String(req.body?.id || "");
+  const key = randomIntByLength(Number(APP_LIMIT_DEFAULT_PIN));
+  req.body.user_activation_key = await bcrypt.hash(key, 10);
+
+  const update = await UsersModel.findOneAndUpdate(
+    { _id: id, user_activation_key: { $ne: "" } },
+    req.body,
+    {
+      new: true,
+    }
+  );
+
+  if (update) {
+    sendEmailAccountVerification(
+      update.user_email,
+      key,
+      update.user_activation_key
+    );
+  }
+
+  const results: ResponseResult = initResponseResult({
+    rowsAffected: update ? 1 : 0,
+  });
+  return sendResponseSuccess(res, { results });
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+  const login = String(req.body?.login || "");
+  const user_pass = randomIntByLength(Number(APP_LIMIT_DEFAULT_PIN));
+  req.body.user_pass = await bcrypt.hash(user_pass, 10);
+
+  const update = await UsersModel.findOneAndUpdate(
+    { $or: [{ user_login: login }, { user_email: login }] },
+    req.body,
+    { new: true }
+  );
+
+  if (update) {
+    await sendEmailPasswordReset(update.user_email, user_pass).catch((err) => {
+      throw err;
+    });
+  }
+
+  const results: ResponseResult = initResponseResult({
+    rowsAffected: update ? 1 : 0,
   });
   return sendResponseSuccess(res, { results });
 };

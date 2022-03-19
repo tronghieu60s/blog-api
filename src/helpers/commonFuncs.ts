@@ -43,20 +43,6 @@ export const joiCommonValidateBody = (schema: Joi.ObjectSchema<any>) => {
   };
 };
 
-export const isAuthorization = (req: Request) => {
-  const { url } = req;
-  if (url.indexOf("/users") === 0) {
-    return true;
-  }
-  if (url.indexOf("/posts") === 0) {
-    return true;
-  }
-  if (url.indexOf("/comments") === 0) {
-    return true;
-  }
-  return false;
-};
-
 export const isAllowAccess = (req: Request, login_level: number) => {
   if (login_level === 1) {
     return true;
@@ -76,10 +62,6 @@ export const authorizationByToken = (
   res: Response,
   next: NextFunction
 ) => {
-  if (!isAuthorization(req)) {
-    return next();
-  }
-
   const token = req.headers?.authorization || "Empty";
   jwt.verify(token, APP_TOKEN_JWT_KEY, (err, decoded) => {
     if (err) {

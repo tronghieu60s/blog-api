@@ -23,10 +23,17 @@ router
     usersController.createUser
   );
 router
-  .route("/verify-account")
-  .get(
+  .route("/verify")
+  .post(
     joiCommonValidateQuery(joiVerifyUserSchema),
-    usersController.verifyAccount
+    usersController.verifyUser
   );
+router
+  .route("/verify-resend")
+  .post(
+    joiCommonValidateQuery(joiVerifyUserSchema),
+    usersController.verifyUserResend
+  );
+router.route("/reset-password").post(usersController.resetPassword);
 
 export default router;
