@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { ResponseResult } from "../common/types";
 import {
   initResponseResult,
-  sendResponseError,
   sendResponseSuccess,
 } from "../helpers/commonFuncs";
 import { sendEmail } from "../helpers/nodemailer";

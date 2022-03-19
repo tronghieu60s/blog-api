@@ -5,16 +5,6 @@ const Schema = mongoose.Schema;
 
 const PostsSchema = new Schema(
   {
-    terms: {
-      type: [Schema.Types.ObjectId],
-      ref: "wp_terms",
-      default: [],
-    },
-    comments: {
-      type: [Schema.Types.ObjectId],
-      ref: "wp_comments",
-      default: [],
-    },
     user_id: {
       type: Schema.Types.ObjectId,
       ref: "wp_users",
@@ -78,6 +68,7 @@ export const joiCreatePostsSchema = Joi.object({
 });
 
 export const joiUpdatePostsSchema = Joi.object({
+  post_parent: Joi.string(),
   post_content: Joi.string(),
   post_title: Joi.string(),
   post_excerpt: Joi.string(),

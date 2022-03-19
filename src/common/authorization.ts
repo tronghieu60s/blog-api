@@ -3,4 +3,8 @@ export default {
     posts: ["GET"],
     comments: ["GET", "POST", "PUT", "DELETE"],
   },
+  2: {
+    posts: ["GET"],
+    comments: ["GET", "POST", "PUT", "DELETE"],
+  },
 };

@@ -1,14 +1,10 @@
+import Joi from "joi";
 import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
 const TermsSchema = new Schema(
   {
-    posts: {
-      type: [Schema.Types.ObjectId],
-      ref: "wp_posts",
-      default: [],
-    },
     term_parent: {
       type: Schema.Types.ObjectId,
       ref: "wp_terms",
@@ -30,5 +26,27 @@ const TermsSchema = new Schema(
   }
 );
 
+TermsSchema.pre("save", async function () {
+  this.term_slug = this.term_slug || this._id;
+});
+
 const TermsModel = mongoose.model("wp_terms", TermsSchema);
 export default TermsModel;
+
+/* Terms Validate */
+
+export const joiCreateTermSchema = Joi.object({
+  term_parent: Joi.string(),
+  term_name: Joi.string().required(),
+  term_slug: Joi.string().required(),
+  term_taxonomy: Joi.string(),
+  term_description: Joi.string(),
+});
+
+export const joiUpdateTermSchema = Joi.object({
+  term_parent: Joi.string(),
+  term_name: Joi.string().required(),
+  term_slug: Joi.string().required(),
+  term_taxonomy: Joi.string(),
+  term_description: Joi.string(),
+});
