@@ -4,7 +4,7 @@ import {
   joiCommonValidateBody,
   joiCommonValidateQuery,
 } from "../helpers/commonFuncs";
-import { joiDeleteManySchema, joiFilterSchema } from "../common/validate";
+import { joiCreateMetaSchema, joiDeleteManySchema, joiFilterSchema, joiUpdateMetaSchema } from "../common/validate";
 import {
   joiCreateCommentsSchema,
   joiUpdateCommentsSchema,
@@ -33,12 +33,18 @@ router
   .delete(commentsController.deleteComment);
 router
   .route("/:id/meta")
-  .get(commentsController.getCommentMeta)
+  .get(
+    joiCommonValidateBody(joiCreateMetaSchema),
+    commentsController.getCommentMeta
+  )
   .post(commentsController.createCommentMeta);
 router
   .route("/:id/meta/:key")
   .get(commentsController.getCommentMeta)
-  .put(commentsController.updateCommentMeta)
+  .put(
+    joiCommonValidateBody(joiUpdateMetaSchema),
+    commentsController.updateCommentMeta
+  )
   .delete(commentsController.deleteCommentMeta);
 
 export default router;

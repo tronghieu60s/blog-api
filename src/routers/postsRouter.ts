@@ -4,7 +4,7 @@ import {
   joiCommonValidateBody,
   joiCommonValidateQuery,
 } from "../helpers/commonFuncs";
-import { joiDeleteManySchema, joiFilterSchema } from "../common/validate";
+import { joiCreateMetaSchema, joiDeleteManySchema, joiFilterSchema, joiUpdateMetaSchema } from "../common/validate";
 import {
   joiCreatePostsSchema,
   joiUpdatePostsSchema,
@@ -28,11 +28,17 @@ router
 router
   .route("/:id/meta")
   .get(postsController.getPostMeta)
-  .post(postsController.createPostMeta);
+  .post(
+    joiCommonValidateBody(joiCreateMetaSchema),
+    postsController.createPostMeta
+  );
 router
   .route("/:id/meta/:key")
   .get(postsController.getPostMeta)
-  .put(postsController.updatePostMeta)
+  .put(
+    joiCommonValidateBody(joiUpdateMetaSchema),
+    postsController.updatePostMeta
+  )
   .delete(postsController.deletePostMeta);
 
 export default router;
