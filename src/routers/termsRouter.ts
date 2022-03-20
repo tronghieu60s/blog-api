@@ -22,5 +22,14 @@ router
   .get(termsController.getTerm)
   .put(joiCommonValidateBody(joiUpdateTermSchema), termsController.updateTerm)
   .delete(termsController.deleteTerm);
+router
+  .route("/:id/meta")
+  .get(termsController.getTermMeta)
+  .post(termsController.createTermMeta);
+router
+  .route("/:id/meta/:key")
+  .get(termsController.getTermMeta)
+  .put(termsController.updateTermMeta)
+  .delete(termsController.deleteTermMeta);
 
 export default router;

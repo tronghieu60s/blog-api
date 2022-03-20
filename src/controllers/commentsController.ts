@@ -6,19 +6,21 @@ import {
 import CommentsModel from "../models/commentsModel";
 import UsersModel from "../models/usersModel";
 import { ResponseResult } from "../common/types";
-import PostsModel from "../models/postsModel";
+import CommentMetaModel from "../models/commentmetaModel";
 
 const { APP_LIMIT_DEFAULT_PAGINATION } = process.env;
 
-const countCommentsPost = async (post_id?: string) => {
+const countCommentsComment = async (post_id?: string) => {
   if (post_id) {
     const count = await CommentsModel.countDocuments({ post_id });
-    await PostsModel.findOneAndUpdate(
+    await CommentsModel.findOneAndUpdate(
       { _id: post_id },
       { comment_count: count }
     );
   }
 };
+
+/* Comments */
 
 export const getComment = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
@@ -101,7 +103,7 @@ export const createComment = async (req: Request, res: Response) => {
   req.body.comment_author_ip = req.ip;
 
   const item = await new CommentsModel(req.body).save();
-  await countCommentsPost(item?.post_id);
+  await countCommentsComment(item?.post_id);
 
   const data = item ? { items: [item] } : {};
   const results: ResponseResult = initResponseResult({
@@ -139,8 +141,65 @@ export const deleteComments = async (req: Request, res: Response) => {
 export const deleteComment = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
   const item = await CommentsModel.findOneAndDelete({ _id: id }).exec();
-  await countCommentsPost(item?.post_id);
+  await countCommentsComment(item?.post_id);
 
+  const results: ResponseResult = initResponseResult({
+    rowsAffected: item ? 1 : 0,
+  });
+  return sendResponseSuccess(res, { results });
+};
+
+/* Comments Meta */
+
+export const getCommentMeta = async (req: Request, res: Response) => {
+  const id = String(req.params?.id || "");
+  const key = String(req.params?.key || "");
+
+  const query = key ? { user_id: id, meta_key: key } : { user_id: id };
+  const items = await CommentMetaModel.find(query);
+  const data = items ? { items } : {};
+  const results: ResponseResult = initResponseResult({
+    data,
+  });
+  return sendResponseSuccess(res, { results });
+};
+
+export const createCommentMeta = async (req: Request, res: Response) => {
+  const id = String(req.params?.id || "");
+  const item = await new CommentMetaModel({ ...req.body, meta_id: id }).save();
+
+  const data = item ? { items: [item] } : {};
+  const results: ResponseResult = initResponseResult({
+    data,
+  });
+  return sendResponseSuccess(res, { results });
+};
+
+export const updateCommentMeta = async (req: Request, res: Response) => {
+  const id = String(req.params?.id || "");
+  const key = String(req.params?.key || "");
+
+  const item = await CommentMetaModel.findOneAndUpdate(
+    { meta_id: id, meta_key: key },
+    req.body,
+    { new: true }
+  );
+  const data = item ? { items: [item] } : {};
+  const results: ResponseResult = initResponseResult({
+    data,
+    rowsAffected: item ? 1 : 0,
+  });
+  return sendResponseSuccess(res, { results });
+};
+
+export const deleteCommentMeta = async (req: Request, res: Response) => {
+  const id = String(req.params?.id || "");
+  const key = String(req.params?.key || "");
+
+  const item = await CommentMetaModel.findOneAndDelete({
+    meta_id: id,
+    meta_key: key,
+  });
   const results: ResponseResult = initResponseResult({
     rowsAffected: item ? 1 : 0,
   });

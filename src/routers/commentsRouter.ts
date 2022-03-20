@@ -31,5 +31,14 @@ router
     commentsController.updateComment
   )
   .delete(commentsController.deleteComment);
+router
+  .route("/:id/meta")
+  .get(commentsController.getCommentMeta)
+  .post(commentsController.createCommentMeta);
+router
+  .route("/:id/meta/:key")
+  .get(commentsController.getCommentMeta)
+  .put(commentsController.updateCommentMeta)
+  .delete(commentsController.deleteCommentMeta);
 
 export default router;

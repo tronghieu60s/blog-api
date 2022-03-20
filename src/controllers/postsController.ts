@@ -5,9 +5,12 @@ import {
   initResponseResult,
   sendResponseSuccess,
 } from "../helpers/commonFuncs";
+import PostMetaModel from "../models/postmetaModel";
 import PostsModel from "../models/postsModel";
 
 const { APP_LIMIT_BCRYPT_ROUNDS, APP_LIMIT_DEFAULT_PAGINATION } = process.env;
+
+/* Posts */
 
 export const getPost = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
@@ -114,6 +117,63 @@ export const deletePosts = async (req: Request, res: Response) => {
 export const deletePost = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
   const item = await PostsModel.findOneAndDelete({ _id: id }).exec();
+  const results: ResponseResult = initResponseResult({
+    rowsAffected: item ? 1 : 0,
+  });
+  return sendResponseSuccess(res, { results });
+};
+
+/* Posts Meta */
+
+export const getPostMeta = async (req: Request, res: Response) => {
+  const id = String(req.params?.id || "");
+  const key = String(req.params?.key || "");
+
+  const query = key ? { user_id: id, meta_key: key } : { user_id: id };
+  const items = await PostMetaModel.find(query);
+  const data = items ? { items } : {};
+  const results: ResponseResult = initResponseResult({
+    data,
+  });
+  return sendResponseSuccess(res, { results });
+};
+
+export const createPostMeta = async (req: Request, res: Response) => {
+  const id = String(req.params?.id || "");
+  const item = await new PostMetaModel({ ...req.body, meta_id: id }).save();
+
+  const data = item ? { items: [item] } : {};
+  const results: ResponseResult = initResponseResult({
+    data,
+  });
+  return sendResponseSuccess(res, { results });
+};
+
+export const updatePostMeta = async (req: Request, res: Response) => {
+  const id = String(req.params?.id || "");
+  const key = String(req.params?.key || "");
+
+  const item = await PostMetaModel.findOneAndUpdate(
+    { meta_id: id, meta_key: key },
+    req.body,
+    { new: true }
+  );
+  const data = item ? { items: [item] } : {};
+  const results: ResponseResult = initResponseResult({
+    data,
+    rowsAffected: item ? 1 : 0,
+  });
+  return sendResponseSuccess(res, { results });
+};
+
+export const deletePostMeta = async (req: Request, res: Response) => {
+  const id = String(req.params?.id || "");
+  const key = String(req.params?.key || "");
+
+  const item = await PostMetaModel.findOneAndDelete({
+    meta_id: id,
+    meta_key: key,
+  });
   const results: ResponseResult = initResponseResult({
     rowsAffected: item ? 1 : 0,
   });

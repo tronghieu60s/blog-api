@@ -4,13 +4,13 @@ const Schema = mongoose.Schema;
 
 const UserMetaSchema = new Schema(
   {
-    user_id: {
+    meta_id: {
       type: Schema.Types.ObjectId,
       ref: "wp_users",
       required: true,
     },
-    user_meta_key: { type: String, required: true },
-    user_meta_value: { type: String, default: "" },
+    meta_key: { type: String, required: true },
+    meta_value: { type: String, default: "" },
   },
   {
     collection: "wp_usermeta",

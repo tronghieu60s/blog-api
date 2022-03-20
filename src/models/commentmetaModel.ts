@@ -4,13 +4,13 @@ const Schema = mongoose.Schema;
 
 const CommentMetaSchema = new Schema(
   {
-    comment_id: {
+    meta_id: {
       type: Schema.Types.ObjectId,
       ref: "wp_comments",
       required: true,
     },
-    comment_meta_key: { type: String, required: true },
-    comment_meta_value: { type: String, default: "" },
+    meta_key: { type: String, required: true },
+    meta_value: { type: String, default: "" },
   },
   {
     collection: "wp_commentmeta",

@@ -10,6 +10,7 @@ import { ResponseResult, TokenParams } from "../common/types";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { sendEmail } from "../helpers/nodemailer";
+import UserMetaModel from "../models/usermetaModel";
 
 const {
   APP_TOKEN_JWT_KEY = "",
@@ -38,6 +39,8 @@ const sendEmailPasswordReset = async (email: string, token: string) => {
   }
   return sendEmail(email, "Password Reset", content);
 };
+
+/* Users */
 
 export const getUser = async (req: Request, res: Response) => {
   const id = String(req.params?.id || "");
@@ -173,6 +176,65 @@ export const deleteUser = async (req: Request, res: Response) => {
   });
   return sendResponseSuccess(res, { results });
 };
+
+/* Users Meta */
+
+export const getUserMeta = async (req: Request, res: Response) => {
+  const id = String(req.params?.id || "");
+  const key = String(req.params?.key || "");
+
+  const query = key ? { user_id: id, meta_key: key } : { user_id: id };
+  const items = await UserMetaModel.find(query);
+  const data = items ? { items } : {};
+  const results: ResponseResult = initResponseResult({
+    data,
+  });
+  return sendResponseSuccess(res, { results });
+};
+
+export const createUserMeta = async (req: Request, res: Response) => {
+  const id = String(req.params?.id || "");
+  const item = await new UserMetaModel({ ...req.body, meta_id: id }).save();
+
+  const data = item ? { items: [item] } : {};
+  const results: ResponseResult = initResponseResult({
+    data,
+  });
+  return sendResponseSuccess(res, { results });
+};
+
+export const updateUserMeta = async (req: Request, res: Response) => {
+  const id = String(req.params?.id || "");
+  const key = String(req.params?.key || "");
+
+  const item = await UserMetaModel.findOneAndUpdate(
+    { meta_id: id, meta_key: key },
+    req.body,
+    { new: true }
+  );
+  const data = item ? { items: [item] } : {};
+  const results: ResponseResult = initResponseResult({
+    data,
+    rowsAffected: item ? 1 : 0,
+  });
+  return sendResponseSuccess(res, { results });
+};
+
+export const deleteUserMeta = async (req: Request, res: Response) => {
+  const id = String(req.params?.id || "");
+  const key = String(req.params?.key || "");
+
+  const item = await UserMetaModel.findOneAndDelete({
+    meta_id: id,
+    meta_key: key,
+  });
+  const results: ResponseResult = initResponseResult({
+    rowsAffected: item ? 1 : 0,
+  });
+  return sendResponseSuccess(res, { results });
+};
+
+/* Identity */
 
 export const noAuthUser = async (req: Request, res: Response) => {
   const login_ip = req.ip;

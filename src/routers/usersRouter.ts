@@ -22,5 +22,14 @@ router
   .get(usersController.getUser)
   .put(joiCommonValidateBody(joiUpdateUserSchema), usersController.updateUser)
   .delete(usersController.deleteUser);
+router
+  .route("/:id/meta")
+  .get(usersController.getUserMeta)
+  .post(usersController.createUserMeta);
+router
+  .route("/:id/meta/:key")
+  .get(usersController.getUserMeta)
+  .put(usersController.updateUserMeta)
+  .delete(usersController.deleteUserMeta);
 
 export default router;
