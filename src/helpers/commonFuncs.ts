@@ -46,6 +46,12 @@ export const joiCommonValidateBody = (schema: Joi.ObjectSchema<any>) => {
 
 export const isAuthorization = (req: Request) => {
   const { url } = req;
+  if (url.indexOf("/uploads") === 0) {
+    return true;
+  }
+  if (url.indexOf("/send-email") === 0) {
+    return true;
+  }
   if (url.indexOf("/users") === 0) {
     return true;
   }

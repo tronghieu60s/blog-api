@@ -50,4 +50,3 @@ dist
 
 # Uploads
 public/uploads/**/*
-!public/uploads/temp
