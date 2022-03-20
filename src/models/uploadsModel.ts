@@ -1,3 +1,4 @@
+import Joi from "joi";
 import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
@@ -21,3 +22,10 @@ const UploadsSchema = new Schema(
 
 const UploadsModel = mongoose.model("wp_uploads", UploadsSchema);
 export default UploadsModel;
+
+export const joiUpdateUploadSchema = Joi.object({
+  upload_filename: Joi.string(),
+  upload_title: Joi.string(),
+  upload_caption: Joi.string(),
+  upload_description: Joi.string(),
+});

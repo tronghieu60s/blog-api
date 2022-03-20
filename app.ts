@@ -20,7 +20,7 @@ app.use(helmet());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(__dirname + "/public"));
+app.use("/static", express.static(process.cwd() + "/public"));
 
 /* MongoDB */
 const MONGODB_URL_LOCAL = `mongodb://localhost/mongo`;
