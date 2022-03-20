@@ -25,7 +25,7 @@ router
 router
   .route("/:id")
   .get(termsController.getTerm)
-  .put(joiCommonValidateBody(joiUpdateTermSchema), termsController.updateTerm)
+  .patch(joiCommonValidateBody(joiUpdateTermSchema), termsController.updateTerm)
   .delete(termsController.deleteTerm);
 router
   .route("/:id/meta")
@@ -34,7 +34,7 @@ router
 router
   .route("/:id/meta/:key")
   .get(termsController.getTermMeta)
-  .put(
+  .patch(
     joiCommonValidateBody(joiUpdateMetaSchema),
     termsController.updateTermMeta
   )

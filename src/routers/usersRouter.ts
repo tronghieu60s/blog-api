@@ -20,7 +20,7 @@ router
 router
   .route("/:id")
   .get(usersController.getUser)
-  .put(joiCommonValidateBody(joiUpdateUserSchema), usersController.updateUser)
+  .patch(joiCommonValidateBody(joiUpdateUserSchema), usersController.updateUser)
   .delete(usersController.deleteUser);
 router
   .route("/:id/meta")
@@ -29,7 +29,7 @@ router
 router
   .route("/:id/meta/:key")
   .get(usersController.getUserMeta)
-  .put(joiCommonValidateBody(joiUpdateMetaSchema), usersController.updateUserMeta)
+  .patch(joiCommonValidateBody(joiUpdateMetaSchema), usersController.updateUserMeta)
   .delete(usersController.deleteUserMeta);
 
 export default router;

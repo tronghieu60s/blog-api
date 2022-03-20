@@ -26,7 +26,7 @@ router
 router
   .route("/:id")
   .get(commentsController.getComment)
-  .put(
+  .patch(
     joiCommonValidateBody(joiUpdateCommentsSchema),
     commentsController.updateComment
   )
@@ -41,7 +41,7 @@ router
 router
   .route("/:id/meta/:key")
   .get(commentsController.getCommentMeta)
-  .put(
+  .patch(
     joiCommonValidateBody(joiUpdateMetaSchema),
     commentsController.updateCommentMeta
   )

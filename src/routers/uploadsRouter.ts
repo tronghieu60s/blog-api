@@ -38,7 +38,7 @@ router
 router
   .route("/:id")
   .get(uploadsController.getUpload)
-  .put(
+  .patch(
     joiCommonValidateBody(joiUpdateUploadSchema),
     uploadsController.updateUpload
   )

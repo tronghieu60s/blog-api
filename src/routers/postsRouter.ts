@@ -23,7 +23,7 @@ router
 router
   .route("/:id")
   .get(postsController.getPost)
-  .put(joiCommonValidateBody(joiUpdatePostsSchema), postsController.updatePost)
+  .patch(joiCommonValidateBody(joiUpdatePostsSchema), postsController.updatePost)
   .delete(postsController.deletePost);
 router
   .route("/:id/meta")
@@ -35,7 +35,7 @@ router
 router
   .route("/:id/meta/:key")
   .get(postsController.getPostMeta)
-  .put(
+  .patch(
     joiCommonValidateBody(joiUpdateMetaSchema),
     postsController.updatePostMeta
   )
