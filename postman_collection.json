@@ -1,0 +1,2425 @@
+{
+	"info": {
+		"_postman_id": "8d63caaa-ad97-4a3b-a959-42733903d243",
+		"name": "Blog Api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "GET /users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /users (search)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users?q=admin&search=user_login",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "admin"
+								},
+								{
+									"key": "search",
+									"value": "user_login"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /users (orderby)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users?orderby=user_login&order=asc",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "orderby",
+									"value": "user_login"
+								},
+								{
+									"key": "order",
+									"value": "asc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /users (pagination)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users?page=1&pageSize=2",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /users/{id}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/6234b4f98c1b9d6d25a21a68",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"6234b4f98c1b9d6d25a21a68"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /users",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "user_login",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "user_pass",
+									"value": "123456",
+									"type": "text"
+								},
+								{
+									"key": "user_email",
+									"value": "admin@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "user_level",
+									"value": "1",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user_status",
+									"value": "0",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/users",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /users/{id}",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "user_pass",
+									"value": "123456",
+									"type": "text"
+								},
+								{
+									"key": "user_email",
+									"value": "tronghieu60s@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "user_level",
+									"value": "1",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user_status",
+									"value": "0",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/users/6234b4f98c1b9d6d25a21a68",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"6234b4f98c1b9d6d25a21a68"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /users",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "ids",
+									"value": "6235b34358a8c83b50e83edf",
+									"type": "text"
+								},
+								{
+									"key": "ids",
+									"value": "6235b35b58a8c83b50e83ee2",
+									"type": "text"
+								},
+								{
+									"key": "ids",
+									"value": "6235b36d58a8c83b50e83ee5",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/users",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /users/{id}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/622f27a4680de0e118fde5c9",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"622f27a4680de0e118fde5c9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /users/{id}/meta",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/623595d0c1c20e907e22f757/meta",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"623595d0c1c20e907e22f757",
+								"meta"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /users/{id}/meta/{key}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/623595d0c1c20e907e22f757/meta/key",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"623595d0c1c20e907e22f757",
+								"meta",
+								"key"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /users/{id}/meta",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "meta_key",
+									"value": "key",
+									"type": "text"
+								},
+								{
+									"key": "meta_value",
+									"value": "value",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/users/623595d0c1c20e907e22f757/meta",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"623595d0c1c20e907e22f757",
+								"meta"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /users/{id}/meta/{key}",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "meta_value",
+									"value": "value",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/users/623595d0c1c20e907e22f757/meta/key",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"623595d0c1c20e907e22f757",
+								"meta",
+								"key"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /users/{id}/meta/{key}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/623595d0c1c20e907e22f757/meta/key",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"623595d0c1c20e907e22f757",
+								"meta",
+								"key"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "posts",
+			"item": [
+				{
+					"name": "GET /posts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/posts",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /posts (search)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/posts?q=hi&search=post_title",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "hi"
+								},
+								{
+									"key": "search",
+									"value": "post_title"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /posts (orderby)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/posts?orderby=post_title&order=asc",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts"
+							],
+							"query": [
+								{
+									"key": "orderby",
+									"value": "post_title"
+								},
+								{
+									"key": "order",
+									"value": "asc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /posts (pagination)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/posts?page=1&pageSize=2",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /posts/{id}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/posts/623074ea263b8a4a46171af0",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts",
+								"623074ea263b8a4a46171af0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /posts",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "post_parent",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "post_content",
+									"value": "<p>Chào tất cả mọi người!</p>",
+									"type": "text"
+								},
+								{
+									"key": "post_title",
+									"value": "Chào tất cả mọi người!",
+									"type": "text"
+								},
+								{
+									"key": "post_excerpt",
+									"value": "<p>Chào tất cả mọi người!</p>",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "post_status",
+									"value": "publish",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "post_comment_status",
+									"value": "open",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "post_password",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "post_slug",
+									"value": "chao-tat-ca-moi-nguoi",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "post_type",
+									"value": "post",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/posts",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /posts/{id}",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "post_parent",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "post_content",
+									"value": "<p>Chào tất cả mọi người!</p>",
+									"type": "text"
+								},
+								{
+									"key": "post_title",
+									"value": "Chào tất cả mọi người!",
+									"type": "text"
+								},
+								{
+									"key": "post_excerpt",
+									"value": "<p>Chào tất cả mọi người!</p>",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "post_status",
+									"value": "publish",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "post_comment_status",
+									"value": "open",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "post_password",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "post_slug",
+									"value": "chao-tat-ca-moi-nguoi",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "post_type",
+									"value": "post",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/posts/6235679a0e6a1884dfe2e715",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts",
+								"6235679a0e6a1884dfe2e715"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /posts",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "ids",
+									"value": "6235b34358a8c83b50e83edf",
+									"type": "text"
+								},
+								{
+									"key": "ids",
+									"value": "6235b35b58a8c83b50e83ee2",
+									"type": "text"
+								},
+								{
+									"key": "ids",
+									"value": "6235b36d58a8c83b50e83ee5",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/posts",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /posts/{id}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/posts/6235679a0e6a1884dfe2e715",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts",
+								"6235679a0e6a1884dfe2e715"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /posts/{id}/meta",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/posts/623595d0c1c20e907e22f757/meta",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts",
+								"623595d0c1c20e907e22f757",
+								"meta"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /posts/{id}/meta/{key}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/posts/623595d0c1c20e907e22f757/meta/key",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts",
+								"623595d0c1c20e907e22f757",
+								"meta",
+								"key"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /posts/{id}/meta",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "meta_key",
+									"value": "key",
+									"type": "text"
+								},
+								{
+									"key": "meta_value",
+									"value": "value",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/posts/623595d0c1c20e907e22f757/meta",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts",
+								"623595d0c1c20e907e22f757",
+								"meta"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /posts/{id}/meta/{key}",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "meta_value",
+									"value": "value",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/posts/623595d0c1c20e907e22f757/meta/key",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts",
+								"623595d0c1c20e907e22f757",
+								"meta",
+								"key"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /posts/{id}/meta/{key}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/posts/623595d0c1c20e907e22f757/meta/key",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts",
+								"623595d0c1c20e907e22f757",
+								"meta",
+								"key"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "comments",
+			"item": [
+				{
+					"name": "GET /comments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/comments",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /comments (search)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/comments?q=623074ea263b8a4a46171af0&search=post_id",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "623074ea263b8a4a46171af0"
+								},
+								{
+									"key": "search",
+									"value": "post_id"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /comments (orderby)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/comments?orderby=comment_content&order=asc",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments"
+							],
+							"query": [
+								{
+									"key": "orderby",
+									"value": "comment_content"
+								},
+								{
+									"key": "order",
+									"value": "asc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /comments (pagination)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/comments?page=1&pageSize=2",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /comments/{id}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/comments/6233476df5a4dca5aed98c0f",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments",
+								"6233476df5a4dca5aed98c0f"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /comments",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "post_id",
+									"value": "62356a99f53bfc499cc47ef9",
+									"type": "text"
+								},
+								{
+									"key": "comment_parent",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "comment_author",
+									"value": "Một người bình luận",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "comment_author_email",
+									"value": "tronghieu60s@gmail.com",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "comment_content",
+									"value": "Xin chào, đây là một bình luận",
+									"type": "text"
+								},
+								{
+									"key": "comment_approved",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "comment_type",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/comments",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /comments/{id}",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "comment_author",
+									"value": "Một người bình luận",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "comment_author_email",
+									"value": "admin@gmail.com",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "comment_content",
+									"value": "Xin chào, đây là một bình luận",
+									"type": "text"
+								},
+								{
+									"key": "comment_approved",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "comment_type",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/comments/623575263d98dacf93c2d2ef",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments",
+								"623575263d98dacf93c2d2ef"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /comments",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "ids",
+									"value": "6235b34358a8c83b50e83edf",
+									"type": "text"
+								},
+								{
+									"key": "ids",
+									"value": "6235b35b58a8c83b50e83ee2",
+									"type": "text"
+								},
+								{
+									"key": "ids",
+									"value": "6235b36d58a8c83b50e83ee5",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/comments",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /comments/{id}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/comments/623575263d98dacf93c2d2ef",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments",
+								"623575263d98dacf93c2d2ef"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /comments/{id}/meta",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/comments/623595d0c1c20e907e22f757/meta",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments",
+								"623595d0c1c20e907e22f757",
+								"meta"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /comments/{id}/meta/{key}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/comments/623595d0c1c20e907e22f757/meta/key",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments",
+								"623595d0c1c20e907e22f757",
+								"meta",
+								"key"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /comments/{id}/meta",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "meta_key",
+									"value": "key",
+									"type": "text"
+								},
+								{
+									"key": "meta_value",
+									"value": "value",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/comments/623595d0c1c20e907e22f757/meta",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments",
+								"623595d0c1c20e907e22f757",
+								"meta"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /comments/{id}/meta/{key}",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "meta_value",
+									"value": "value",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/comments/623595d0c1c20e907e22f757/meta/key",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments",
+								"623595d0c1c20e907e22f757",
+								"meta",
+								"key"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /comments/{id}/meta/{key}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/comments/623595d0c1c20e907e22f757/meta/key",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"comments",
+								"623595d0c1c20e907e22f757",
+								"meta",
+								"key"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "terms",
+			"item": [
+				{
+					"name": "GET /terms",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/terms",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"terms"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /terms (search)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/terms?q=category&search=term_taxonomy",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"terms"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "category"
+								},
+								{
+									"key": "search",
+									"value": "term_taxonomy"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /terms (orderby)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/terms?orderby=post_title&order=asc",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"terms"
+							],
+							"query": [
+								{
+									"key": "orderby",
+									"value": "post_title"
+								},
+								{
+									"key": "order",
+									"value": "asc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /terms (pagination)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/posts?page=1&pageSize=2",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /terms/{id}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/terms/62359c929f5a117e54072723",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"terms",
+								"62359c929f5a117e54072723"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /terms",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "term_parent",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "term_name",
+									"value": "Kinh doanh",
+									"type": "text"
+								},
+								{
+									"key": "term_slug",
+									"value": "kinh-doanh",
+									"type": "text"
+								},
+								{
+									"key": "term_taxonomy",
+									"value": "category",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "term_description",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/terms",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"terms"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /terms/{id}",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "term_parent",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "term_name",
+									"value": "Kinh doanh",
+									"type": "text"
+								},
+								{
+									"key": "term_slug",
+									"value": "kinh-doanh",
+									"type": "text"
+								},
+								{
+									"key": "term_taxonomy",
+									"value": "category",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "term_description",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/terms/62359c929f5a117e54072723",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"terms",
+								"62359c929f5a117e54072723"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /terms",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "ids",
+									"value": "6235b34358a8c83b50e83edf",
+									"type": "text"
+								},
+								{
+									"key": "ids",
+									"value": "6235b35b58a8c83b50e83ee2",
+									"type": "text"
+								},
+								{
+									"key": "ids",
+									"value": "6235b36d58a8c83b50e83ee5",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/terms",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"terms"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /terms/{id}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/terms/62359d199f5a117e54072727",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"terms",
+								"62359d199f5a117e54072727"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /terms/{id}/meta",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/terms/623595d0c1c20e907e22f757/meta",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"terms",
+								"623595d0c1c20e907e22f757",
+								"meta"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /terms/{id}/meta/{key}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/terms/623595d0c1c20e907e22f757/meta/key",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"terms",
+								"623595d0c1c20e907e22f757",
+								"meta",
+								"key"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /terms/{id}/meta",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "meta_key",
+									"value": "key",
+									"type": "text"
+								},
+								{
+									"key": "meta_value",
+									"value": "value",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/terms/623595d0c1c20e907e22f757/meta",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"terms",
+								"623595d0c1c20e907e22f757",
+								"meta"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /terms/{id}/meta/{key}",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "meta_value",
+									"value": "value",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/terms/623595d0c1c20e907e22f757/meta/key",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"terms",
+								"623595d0c1c20e907e22f757",
+								"meta",
+								"key"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /terms/{id}/meta/{key}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/terms/623595d0c1c20e907e22f757/meta/key",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"terms",
+								"623595d0c1c20e907e22f757",
+								"meta",
+								"key"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "identity",
+			"item": [
+				{
+					"name": "POST /no-auth",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{host}}/identity/no-auth",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"identity",
+								"no-auth"
+							],
+							"query": [
+								{
+									"key": "expire",
+									"value": "60000",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /auth",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "login",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								},
+								{
+									"key": "expire",
+									"value": "60000",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/identity/auth",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"identity",
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "user_login",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "user_pass",
+									"value": "123456",
+									"type": "text"
+								},
+								{
+									"key": "user_email",
+									"value": "tronghieu60s@gmail.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/identity/register",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"identity",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /verify (key)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "id",
+									"value": "62357250bc2984770a8856a7",
+									"type": "text"
+								},
+								{
+									"key": "key",
+									"value": "664841",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/identity/verify",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"identity",
+								"verify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /verify (token)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "token",
+									"value": "$2b$10$fXjgcsv3Jsrya59w8nruKeAQec7KGE.Y0oChrdmKPRN9nm7DHPKNe",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/identity/verify",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"identity",
+								"verify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /verify-resend",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "id",
+									"value": "6234b4f98c1b9d6d25a21a68",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/identity/verify-resend",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"identity",
+								"verify-resend"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /reset-password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "login",
+									"value": "admin",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/identity/reset-password",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"identity",
+								"reset-password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "uploads",
+			"item": [
+				{
+					"name": "GET /uploads",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/uploads",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"uploads"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /uploads (search)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/uploads?q=admin&search=user_login",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"uploads"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "admin"
+								},
+								{
+									"key": "search",
+									"value": "user_login"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /uploads (orderby)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/uploads?orderby=user_login&order=asc",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"uploads"
+							],
+							"query": [
+								{
+									"key": "orderby",
+									"value": "user_login"
+								},
+								{
+									"key": "order",
+									"value": "asc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /uploads (pagination)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/uploads?page=1&pageSize=2",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"uploads"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /uploads",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": "/C:/Users/trong/Downloads/cau-luong.png"
+								},
+								{
+									"key": "files",
+									"type": "file",
+									"src": "/C:/Users/trong/Downloads/cau-luong.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/uploads",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"uploads"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /uploads/{id}",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "upload_filename",
+									"value": "cau-luong.png",
+									"type": "text"
+								},
+								{
+									"key": "upload_title",
+									"value": "cau-luong.png",
+									"type": "text"
+								},
+								{
+									"key": "upload_caption",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "upload_description",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/uploads/6236c0ddb0e173add93d51be",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"uploads",
+								"6236c0ddb0e173add93d51be"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /uploads",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "files",
+									"value": "6236bca83c3fc87acab92586",
+									"type": "text"
+								},
+								{
+									"key": "files",
+									"value": "6236bca83c3fc87acab92587",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/uploads",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"uploads"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /uploads/{id}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "files",
+									"value": "6236bca83c3fc87acab92586",
+									"type": "text"
+								},
+								{
+									"key": "files",
+									"value": "6236bca83c3fc87acab92587",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/uploads/6236bf58ba718c0cae92441f",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"uploads",
+								"6236bf58ba718c0cae92441f"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "options",
+			"item": [
+				{
+					"name": "GET /options",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/options",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"options"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /options/{id}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/options/6237471f912ce9aa4cf0c753",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"options",
+								"6237471f912ce9aa4cf0c753"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /options",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "option_name",
+									"value": "name",
+									"type": "text"
+								},
+								{
+									"key": "option_value",
+									"value": "value",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/options",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"options"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH /options/{id}",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "option_value",
+									"value": "value",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/options/6237471f912ce9aa4cf0c753",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"options",
+								"6237471f912ce9aa4cf0c753"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /options/{id}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "option_name",
+									"value": "name",
+									"type": "text"
+								},
+								{
+									"key": "option_value",
+									"value": "value",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/options/6237471f912ce9aa4cf0c753",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"options",
+								"6237471f912ce9aa4cf0c753"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "GET /404",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/404",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"404"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /500",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/500",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"500"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST /send-email",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "tronghieu60s@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "subject",
+							"value": "Subject",
+							"type": "text"
+						},
+						{
+							"key": "content",
+							"value": "Content",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{host}}/send-email",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"send-email"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"const Header = require('postman-collection').Header;",
+					"pm.request.headers.add({",
+					"    key: 'Authorization',",
+					"    value: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6IjYyMzU5NWQwYzFjMjBlOTA3ZTIyZjc1NyIsImxvZ2luX2lwIjoiOjoxIiwiZXhwaXJlX2luIjoxNjQ3NzY1MzQwOTA1LCJpYXQiOjE2NDc2Nzg5NDB9.SiIj1OS53Yx9GNCo6kqD00f1lJdH4XFvPfQVa4zy5fA'",
+					"})",
+					"",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

@@ -1,10 +1,10 @@
 import PromiseRouter from "express-promise-router";
+import { joiCreateMetaSchema, joiDeleteManySchema, joiFilterSchema, joiUpdateMetaSchema } from "../common/validate";
 import * as usersController from "../controllers/usersController";
 import {
   joiCommonValidateBody,
-  joiCommonValidateQuery,
+  joiCommonValidateQuery
 } from "../helpers/commonFuncs";
-import { joiCreateMetaSchema, joiDeleteManySchema, joiFilterSchema, joiUpdateMetaSchema } from "../common/validate";
 import { joiCreateUserSchema, joiUpdateUserSchema } from "../models/usersModel";
 
 const router = PromiseRouter();
