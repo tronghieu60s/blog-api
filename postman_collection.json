@@ -2163,18 +2163,7 @@
 						"header": [],
 						"body": {
 							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "files",
-									"value": "6236bca83c3fc87acab92586",
-									"type": "text"
-								},
-								{
-									"key": "files",
-									"value": "6236bca83c3fc87acab92587",
-									"type": "text"
-								}
-							]
+							"urlencoded": []
 						},
 						"url": {
 							"raw": "{{host}}/uploads/6236bf58ba718c0cae92441f",
