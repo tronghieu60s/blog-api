@@ -1,1 +1,1 @@
-# wordpress-api
+# blog-api
